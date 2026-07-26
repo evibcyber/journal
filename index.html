@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="en" data-theme="night">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f121a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Case File">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<title>Case File</title>
+<style>
+:root{
+  --ink:#0f121a; --ink2:#161a24; --ink3:#1e2331; --rule:#2b3244;
+  --paper:#e7e5df; --muted:#8b93a7; --brass:#c2a15c; --brass-dim:#6d5c34;
+  --l1:#6f8f7a; --l2:#8a9670; --l3:#b39a5e; --l4:#b8724a; --l5:#9d4a42;
+  --serif:'Iowan Old Style','Palatino Linotype','Book Antiqua',Palatino,'URW Palladio L',Palatino,serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+  --mono:ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;
+  --r:3px;
+}
+html[data-theme="day"]{
+  --ink:#e9e7e0; --ink2:#f4f2ec; --ink3:#fffdf7; --rule:#cfcabb;
+  --paper:#1b1d22; --muted:#615f58; --brass:#7a5c17; --brass-dim:#9a8850;
+}
+html[data-theme="day"] button.act{color:#fff}
+html[data-theme="day"] .cell .box.on{color:#12141a}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ink); color:var(--paper); font-family:var(--sans);
+  font-size:16px; line-height:1.55; -webkit-text-size-adjust:100%;
+  padding-bottom:64px;
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+a{color:var(--brass)}
+::selection{background:var(--brass);color:var(--ink)}
+
+/* ---- header ---- */
+header{
+  position:sticky;top:0;z-index:40;background:var(--ink);
+  border-bottom:1px solid var(--rule);
+}
+.bar{display:flex;align-items:baseline;gap:12px;padding:14px 0 10px}
+.mark{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass)}
+.mark b{font-weight:600}
+.bar .spacer{flex:1}
+.panicbtn{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  background:transparent;border:1px solid var(--l5);color:var(--l5);
+  padding:6px 10px;border-radius:var(--r);cursor:pointer;
+}
+.panicbtn:hover{background:var(--l5);color:#fff}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding-bottom:0}
+nav::-webkit-scrollbar{display:none}
+nav button{
+  flex:0 0 auto;background:none;border:0;border-bottom:2px solid transparent;
+  color:var(--muted);font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;
+  text-transform:uppercase;padding:9px 11px;cursor:pointer;white-space:nowrap;
+}
+nav button:hover{color:var(--paper)}
+nav button[aria-current="true"]{color:var(--brass);border-bottom-color:var(--brass)}
+
+/* ---- today strip (signature) ---- */
+.strip{display:flex;gap:5px;padding:12px 0 14px;align-items:flex-end;flex-wrap:wrap}
+.cell{flex:1 1 0;min-width:52px;text-align:center}
+.cell .box{
+  height:34px;border:1px solid var(--rule);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:13px;color:var(--muted);background:var(--ink2);
+}
+.cell .box.on{border-color:transparent;color:#0f121a;font-weight:700}
+.cell .lb{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--muted);margin-top:5px;text-transform:uppercase}
+.lv1{background:var(--l1)!important}.lv2{background:var(--l2)!important}.lv3{background:var(--l3)!important}
+.lv4{background:var(--l4)!important}.lv5{background:var(--l5)!important;color:#fff!important}
+
+/* ---- panels ---- */
+section[hidden]{display:none}
+h1{font-family:var(--serif);font-weight:400;font-size:27px;line-height:1.2;margin:24px 0 4px;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-weight:400;font-size:19px;margin:26px 0 8px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);margin:26px 0 8px}
+.card{background:var(--ink2);border:1px solid var(--rule);border-radius:var(--r);padding:15px;margin:12px 0}
+.card.tight{padding:12px}
+.rule{height:1px;background:var(--rule);margin:22px 0;border:0}
+
+/* ---- forms ---- */
+label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+input[type=text],input[type=date],input[type=datetime-local],input[type=password],select,textarea{
+  width:100%;background:var(--ink3);border:1px solid var(--rule);border-radius:var(--r);
+  color:var(--paper);padding:10px 11px;font-family:var(--sans);font-size:15px;
+}
+textarea{font-family:var(--serif);font-size:17px;line-height:1.6;min-height:110px;resize:vertical}
+textarea.short{min-height:76px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--brass)}
+button.act{
+  background:var(--brass);color:#14161d;border:0;border-radius:var(--r);
+  font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  padding:11px 16px;cursor:pointer;font-weight:600;
+}
+button.act:hover{filter:brightness(1.12)}
+button.ghost{
+  background:transparent;color:var(--muted);border:1px solid var(--rule);border-radius:var(--r);
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:9px 13px;cursor:pointer;
+}
+button.ghost:hover{color:var(--paper);border-color:var(--muted)}
+button.danger{border-color:var(--l5);color:var(--l5)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.hint{font-size:13px;color:var(--muted);margin-top:6px}
+
+/* ---- scale picker ---- */
+.scale{display:flex;gap:6px;margin-top:6px}
+.scale button{
+  flex:1;background:var(--ink3);border:1px solid var(--rule);border-radius:var(--r);
+  color:var(--muted);font-family:var(--mono);font-size:15px;padding:12px 0;cursor:pointer;
+}
+.scale button[aria-pressed="true"]{color:#11141b;font-weight:700;border-color:transparent}
+.scaleWrap{margin-bottom:4px}
+.scaleWrap .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.scaleWrap .top span{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.anchors{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:5px;letter-spacing:.06em}
+
+/* ---- tags ---- */
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{
+  border:1px solid var(--rule);background:var(--ink3);color:var(--muted);
+  border-radius:20px;padding:5px 11px;font-size:13px;cursor:pointer;font-family:var(--sans);
+}
+.tag[aria-pressed="true"]{border-color:var(--brass);color:var(--brass);background:transparent}
+
+/* ---- entries ---- */
+.entry{border-top:1px solid var(--rule);padding:16px 0}
+.entry:first-of-type{border-top:0}
+.meta{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.meta .num{color:var(--brass-dim)}
+.entry h3{font-family:var(--serif);font-weight:400;font-size:20px;margin:7px 0 4px}
+.entry p{margin:8px 0;font-family:var(--serif);font-size:16.5px;line-height:1.6;white-space:pre-wrap}
+.entry .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);margin-top:12px}
+.pips{font-family:var(--mono);letter-spacing:.16em;font-size:14px}
+.rowend{display:flex;gap:8px;margin-top:10px}
+.linkbtn{background:none;border:0;color:var(--muted);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:4px 0}
+.linkbtn:hover{color:var(--paper)}
+.linkbtn.del:hover{color:var(--l5)}
+.empty{color:var(--muted);font-family:var(--serif);font-size:16px;font-style:italic;padding:22px 0}
+
+/* ---- chart ---- */
+.chart{width:100%;height:150px;display:block;margin-top:10px}
+.chart .grid{stroke:var(--rule);stroke-width:1}
+.chart .ln{fill:none;stroke:var(--brass);stroke-width:1.8}
+.chart .dot{fill:var(--brass)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+
+/* ---- stats ---- */
+.statrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--rule)}
+.statrow:first-child{border-top:0}
+.statrow .nm{font-size:14.5px}
+.statrow .ct{font-family:var(--mono);font-size:12px;color:var(--brass)}
+.statbar{grid-column:1 / -1;height:3px;background:var(--rule);border-radius:2px;overflow:hidden}
+.statbar i{display:block;height:100%;background:var(--brass)}
+.readout{font-family:var(--serif);font-size:17px;line-height:1.6;margin:0 0 16px}
+.readout b{color:var(--brass);font-weight:400}
+
+/* ---- distortion scan ---- */
+.scanout{
+  background:var(--ink3);border:1px solid var(--rule);border-left:2px solid var(--brass);
+  border-radius:var(--r);padding:13px;font-family:var(--serif);font-size:16.5px;line-height:1.75;white-space:pre-wrap;margin-top:10px;
+}
+.scanout mark{background:transparent;color:var(--paper);border-bottom:2px solid var(--brass);padding-bottom:1px}
+.scanout mark sup{font-family:var(--mono);font-size:9px;color:var(--brass);letter-spacing:.05em;vertical-align:super;margin-left:2px}
+details.dist{border-top:1px solid var(--rule);padding:11px 0}
+details.dist summary{cursor:pointer;font-size:15px;list-style:none;display:flex;align-items:center;gap:9px}
+details.dist summary::-webkit-details-marker{display:none}
+details.dist summary .k{font-family:var(--mono);font-size:10px;color:var(--brass-dim);letter-spacing:.1em}
+details.dist p{color:var(--muted);font-size:14.5px;margin:8px 0 0 0}
+details.dist p.ex{font-family:var(--serif);color:var(--paper);font-style:italic;font-size:15.5px}
+.chk{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-top:1px solid var(--rule);cursor:pointer}
+.chk input{margin-top:4px;accent-color:var(--brass);width:16px;height:16px;flex:0 0 auto}
+.chk span{font-size:15px}
+.chk .sug{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--brass);border:1px solid var(--brass-dim);border-radius:2px;padding:1px 5px;margin-left:6px;text-transform:uppercase}
+
+/* ---- crisis ---- */
+#crisis .card{border-left:2px solid var(--l5)}
+.step{border-top:1px solid var(--rule);padding:15px 0}
+.step .n{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--l4);text-transform:uppercase}
+.step h3{font-family:var(--serif);font-weight:400;font-size:19px;margin:5px 0 6px}
+.step p{margin:6px 0;font-size:15px;color:var(--paper)}
+.step ul{margin:8px 0;padding-left:19px;color:var(--paper);font-size:15px}
+.step li{margin:5px 0}
+.call{display:block;border:1px solid var(--rule);border-radius:var(--r);padding:12px 13px;margin:8px 0;text-decoration:none;color:var(--paper);background:var(--ink3)}
+.call:hover{border-color:var(--brass)}
+.call b{display:block;font-family:var(--mono);font-size:15px;letter-spacing:.06em;color:var(--brass)}
+.call small{color:var(--muted);font-size:13px}
+.alertbar{background:var(--l5);color:#fff;padding:12px 14px;border-radius:var(--r);font-size:15px;margin:16px 0}
+
+/* ---- lock ---- */
+#lock{position:fixed;inset:0;background:var(--ink);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+#lock .inner{max-width:300px;width:100%;text-align:center}
+#lock h1{font-size:22px;margin-bottom:18px}
+
+/* ---- toast ---- */
+#toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:90;
+  background:var(--ink3);border:1px solid var(--brass);color:var(--paper);
+  padding:11px 18px;border-radius:var(--r);font-family:var(--mono);font-size:12px;
+  letter-spacing:.08em;text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity .2s
+}
+#toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  html{--ink:#fff;--ink2:#fff;--ink3:#fff;--rule:#bbb;--paper:#000;--muted:#555;--brass:#6b5214;--brass-dim:#8a7a45}
+  header,#toast,#lock,.row,.rowend,button,input,select,textarea,label,.chart,.anchors,.sub{display:none!important}
+  body{padding:0;font-size:12pt}
+  .wrap{max-width:none;padding:0}
+  .entry,.step,.card{page-break-inside:avoid}
+  .card{border:1px solid #bbb}
+  a{color:#000;text-decoration:none}
+}
+@media (max-width:520px){
+  h1{font-size:24px}
+  .cell{min-width:0}
+  .cell .lb{font-size:8.5px;letter-spacing:.04em}
+}
+</style>
+</head>
+<body>
+
+<div id="lock" hidden>
+  <div class="inner">
+    <div class="mark" style="margin-bottom:18px">Locked</div>
+    <h1 style="font-family:var(--serif)">Enter your code</h1>
+    <input type="password" id="lockInput" inputmode="numeric" autocomplete="off" style="text-align:center;font-family:var(--mono);font-size:22px;letter-spacing:.4em">
+    <div class="row" style="justify-content:center"><button class="act" id="lockGo">Unlock</button></div>
+    <p class="hint" id="lockMsg"></p>
+  </div>
+</div>
+
+<header>
+  <div class="wrap">
+    <div class="bar">
+      <div class="mark"><b id="appTitle">Case File</b></div>
+      <div class="spacer"></div>
+      <button class="panicbtn" data-go="crisis">Crisis plan</button>
+    </div>
+    <nav id="nav">
+      <button data-go="today" aria-current="true">Today</button>
+      <button data-go="urges">Urge check-in</button>
+      <button data-go="mood">Mood &amp; triggers</button>
+      <button data-go="thoughts">Thought records</button>
+      <button data-go="lies">Lie log</button>
+      <button data-go="prep">Session prep</button>
+      <button data-go="after">After session</button>
+      <button data-go="crisis">Crisis</button>
+      <button data-go="data">Data</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ===================== TODAY ===================== -->
+<section id="today">
+  <h1 id="todayDate">Today</h1>
+  <p class="sub" id="todayLine">Nothing logged yet today.</p>
+  <div class="strip" id="strip"></div>
+  <div class="row">
+    <button class="act" data-go="urges">Do today's check-in</button>
+    <button class="ghost" data-go="mood">Log a mood or trigger</button>
+    <button class="ghost" data-go="thoughts">Work a thought</button>
+  </div>
+
+  <div class="eyebrow">Last 14 days</div>
+  <div class="card tight">
+    <select id="chartPick"></select>
+    <svg class="chart" id="chart" viewBox="0 0 600 150" preserveAspectRatio="none" aria-label="Trend chart"></svg>
+    <div class="anchors"><span id="chartFrom"></span><span id="chartTo"></span></div>
+  </div>
+
+  <div class="eyebrow">Open for next session</div>
+  <div id="todayPrep"></div>
+</section>
+
+<!-- ===================== URGES ===================== -->
+<section id="urges" hidden>
+  <h1>Urge check-in</h1>
+  <p class="sub">One rating per day, 1 to 5. Rate the strongest it got, not the average.</p>
+  <label for="urgeDate">Date</label>
+  <input type="date" id="urgeDate">
+  <div id="urgeScales"></div>
+  <label for="urgeNote">Note (optional)</label>
+  <textarea id="urgeNote" class="short" placeholder="Anything that explains today's numbers."></textarea>
+  <div class="row">
+    <button class="act" id="urgeSave">Save check-in</button>
+    <span class="hint" id="urgeExists"></span>
+  </div>
+  <hr class="rule">
+  <div class="eyebrow">History</div>
+  <div id="urgeList"></div>
+</section>
+
+<!-- ===================== MOOD ===================== -->
+<section id="mood" hidden>
+  <h1>Mood &amp; triggers</h1>
+  <p class="sub">Log it the moment it lands. Short is fine.</p>
+  <label for="mTitle">Title</label>
+  <input type="text" id="mTitle" placeholder="Name this one. e.g. Bus stop, 40 minutes late">
+  <label for="mWhen">When</label>
+  <input type="datetime-local" id="mWhen">
+  <label>Emotion</label>
+  <div class="tags" id="mEmotions"></div>
+  <input type="text" id="mEmotionAdd" placeholder="Add your own, then press Enter" style="margin-top:8px">
+  <div class="scaleWrap" style="margin-top:18px">
+    <div class="top"><span>Intensity</span><span id="mIntLabel">—</span></div>
+    <div class="scale" id="mIntensity"></div>
+    <div class="anchors"><span>Noticed it</span><span>Ran the whole show</span></div>
+  </div>
+  <label for="mTrigger">Trigger</label>
+  <input type="text" id="mTrigger" placeholder="What set it off, as plainly as you can say it">
+  <label for="mBody">Where it showed up in your body</label>
+  <input type="text" id="mBody" placeholder="Jaw, chest, hands, stomach…">
+  <label for="mReview">The review</label>
+  <textarea id="mReview" placeholder="What happened, what you felt, what you did, and what you'd note for next time."></textarea>
+  <label for="mDid">What you did with it</label>
+  <input type="text" id="mDid" placeholder="Skill used, or what happened instead">
+  <div class="row">
+    <button class="act" id="mSave">Save entry</button>
+    <button class="ghost" id="mCancel" hidden>Cancel edit</button>
+  </div>
+  <hr class="rule">
+  <div class="eyebrow">Entries</div>
+  <div id="mList"></div>
+</section>
+
+<!-- ===================== THOUGHTS ===================== -->
+<section id="thoughts" hidden>
+  <h1>Thought records</h1>
+  <p class="sub">Write it raw first. Then look at the shape of it.</p>
+  <label for="tRaw">The vent — exactly how it sounds in your head</label>
+  <textarea id="tRaw" placeholder="Don't clean it up. Distorted is the point."></textarea>
+  <div class="row">
+    <button class="ghost" id="tScan">Scan for patterns</button>
+    <button class="ghost" id="tClearScan" hidden>Clear scan</button>
+  </div>
+  <div id="tScanBox" hidden>
+    <div class="eyebrow">Marked passages</div>
+    <div class="scanout" id="tScanOut"></div>
+    <p class="hint">The scan matches wording, not meaning. It will miss things and it will be wrong sometimes. You have the final say — tick and untick freely.</p>
+  </div>
+
+  <div class="eyebrow">Patterns in this one</div>
+  <div id="tChecks"></div>
+
+  <label for="tFor">Evidence that supports the thought</label>
+  <textarea id="tFor" class="short" placeholder="Real, checkable facts only. Feelings go in the vent."></textarea>
+  <label for="tAgainst">Evidence that doesn't fit it</label>
+  <textarea id="tAgainst" class="short" placeholder="Including things you'd notice if this were happening to someone else."></textarea>
+  <label for="tNew">The rewrite</label>
+  <textarea id="tNew" placeholder="Not a nicer version. A more accurate one — it's allowed to still be bad."></textarea>
+  <label for="tBelief">How much you believe the rewrite</label>
+  <div class="scale" id="tBeliefScale"></div>
+  <div class="anchors"><span>Not at all</span><span>Fully</span></div>
+  <div class="row">
+    <button class="act" id="tSave">Save record</button>
+    <button class="ghost" id="tCancel" hidden>Cancel edit</button>
+  </div>
+
+  <hr class="rule">
+  <div class="eyebrow">The distortion list</div>
+  <div id="tLibrary"></div>
+
+  <hr class="rule">
+  <div class="eyebrow">Saved records</div>
+  <div id="tList"></div>
+</section>
+
+<!-- ===================== LIES ===================== -->
+<section id="lies" hidden>
+  <h1>Lie log</h1>
+  <p class="sub">A record, not a verdict. The useful part is underneath — what the lie was doing for you in that second, and what it keeps doing across entries.</p>
+
+  <label for="lWhen">When</label>
+  <input type="datetime-local" id="lWhen">
+
+  <label>Who it was with</label>
+  <div class="tags" id="lWith"></div>
+
+  <label for="lSaid">What I said</label>
+  <textarea id="lSaid" class="short" placeholder="As close to the actual words as you can get."></textarea>
+
+  <label for="lTrue">What was true</label>
+  <textarea id="lTrue" class="short" placeholder="The version you didn't say."></textarea>
+
+  <label>Shape it took</label>
+  <div class="tags" id="lForm"></div>
+
+  <label for="lBefore">What was going on right before</label>
+  <input type="text" id="lBefore" placeholder="The question asked, the state you were in, how tired, who was in the room">
+
+  <label>What I think I was going for</label>
+  <div class="tags" id="lFunc"></div>
+  <p class="hint">More than one can be true. Not everything here is a problem to fix — keeping someone out of your business is a boundary, and it belongs in the record as itself.</p>
+
+  <div class="scaleWrap" style="margin-top:18px">
+    <div class="top"><span>How automatic</span><span id="lAutoLabel">—</span></div>
+    <div class="scale" id="lAuto"></div>
+    <div class="anchors"><span>1 · Chose it</span><span>5 · Out before I noticed</span></div>
+  </div>
+
+  <label for="lAfter">What happened in me straight after</label>
+  <input type="text" id="lAfter" placeholder="Relief, nothing, dread, a rush, needing to keep talking…">
+
+  <label for="lCost">What it cost, and who it landed on</label>
+  <input type="text" id="lCost" placeholder="Including 'nothing yet' — that's data too">
+
+  <label for="lFix">Where it stands</label>
+  <select id="lFix">
+    <option value="open">Still standing — not caught</option>
+    <option value="caught">They caught it</option>
+    <option value="fixed">I corrected it</option>
+    <option value="want">I want to correct it</option>
+    <option value="keep">I'm keeping this one</option>
+  </select>
+
+  <label for="lNote">Anything else</label>
+  <textarea id="lNote" class="short" placeholder="What you'd want to have done instead, or what you still don't understand about it."></textarea>
+
+  <div class="row">
+    <button class="act" id="lSave">Save entry</button>
+    <button class="ghost" id="lCancel" hidden>Cancel edit</button>
+  </div>
+
+  <hr class="rule">
+  <div class="eyebrow">The pattern so far</div>
+  <div id="lStats"></div>
+
+  <hr class="rule">
+  <div class="eyebrow">Entries</div>
+  <div id="lList"></div>
+</section>
+
+<!-- ===================== PREP ===================== -->
+<section id="prep" hidden>
+  <h1>Session prep</h1>
+  <p class="sub">Things to bring up. Sorted so nothing gets lost between appointments.</p>
+  <label for="pCat">Category</label>
+  <select id="pCat"></select>
+  <label for="pText">What you want to say</label>
+  <textarea id="pText" placeholder="Write it the way you'd want to say it out loud."></textarea>
+  <label for="pWhy">Why it matters / what you want from raising it</label>
+  <input type="text" id="pWhy" placeholder="Optional. Useful when the moment comes and you freeze.">
+  <div class="row">
+    <button class="act" id="pSave">Add to list</button>
+  </div>
+  <hr class="rule">
+  <div class="row" style="margin:0 0 6px">
+    <select id="pFilter" style="flex:1"></select>
+    <button class="ghost" id="pCopy">Copy prep sheet</button>
+  </div>
+  <div id="pList"></div>
+</section>
+
+<!-- ===================== AFTER ===================== -->
+<section id="after" hidden>
+  <h1>After session</h1>
+  <p class="sub">Written the same day, while it's still accurate.</p>
+  <label for="aWhen">Date</label>
+  <input type="date" id="aWhen">
+  <label for="aWho">Who</label>
+  <input type="text" id="aWho" placeholder="Therapist, psychiatrist, DBT group…">
+  <label for="aShared">What you actually shared</label>
+  <textarea id="aShared" placeholder="Including the parts you surprised yourself by saying."></textarea>
+  <label for="aHeld">What you held back, and what stopped you</label>
+  <textarea id="aHeld" class="short" placeholder="No judgement here. This is the most useful field on the page."></textarea>
+  <label for="aFeel">How you feel now</label>
+  <textarea id="aFeel" class="short" placeholder="Right after. Before it settles into a story."></textarea>
+  <div class="scaleWrap" style="margin-top:18px">
+    <div class="top"><span>Session felt</span><span id="aRateLabel">—</span></div>
+    <div class="scale" id="aRate"></div>
+    <div class="anchors"><span>Went nowhere</span><span>Something moved</span></div>
+  </div>
+  <label for="aNext">Homework, follow-ups, things to try</label>
+  <textarea id="aNext" class="short" placeholder="What you agreed to, and when you'll check it."></textarea>
+  <div class="row">
+    <button class="act" id="aSave">Save log</button>
+    <button class="ghost" id="aCancel" hidden>Cancel edit</button>
+  </div>
+  <hr class="rule">
+  <div class="eyebrow">Past sessions</div>
+  <div id="aList"></div>
+</section>
+
+<!-- ===================== CRISIS ===================== -->
+<section id="crisis" hidden>
+  <div id="crisisAlert" hidden></div>
+  <h1>Crisis plan</h1>
+  <p class="sub">You wrote most of this when you were steadier than you are now. That version of you gets a vote.</p>
+
+  <div class="card">
+    <div class="step" style="border-top:0">
+      <div class="n">Step 1</div>
+      <h3>Stop where you are</h3>
+      <p>Feet still. Hands empty. Don't act on it for the length of this page — that's the only commitment right now.</p>
+      <ul>
+        <li><b>S</b> — Stop. Freeze the moment.</li>
+        <li><b>T</b> — Take a step back, physically if you can.</li>
+        <li><b>O</b> — Observe. What's happening in the room, in your body, in the thought.</li>
+        <li><b>P</b> — Proceed mindfully. Pick the next step from this page, not from the urge.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <div class="n">Step 2</div>
+      <h3>Put distance between you and harm</h3>
+      <p>Move away from anything you could use to hurt yourself. Hand it to someone, put it somewhere that takes real effort to reach, or leave the room and don't go back alone. Distance buys time, and urges lose height with time.</p>
+      <p>If you're alone, go where other people are — a different room, a stairwell, outside the door, a shop that's open.</p>
+    </div>
+
+    <div class="step">
+      <div class="n">Step 3</div>
+      <h3>Bring the body down first</h3>
+      <p>The thinking won't come back until the physiology does. Pick one and do it for a few minutes:</p>
+      <ul>
+        <li><b>Move hard.</b> Fast walk, stairs, push-ups, dancing to something loud — enough to breathe heavily. Short and intense.</li>
+        <li><b>Paced breathing.</b> Breathe out longer than you breathe in. Roughly in for 4, out for 6 to 8. Keep going past the point where it feels pointless.</li>
+        <li><b>Paired muscle relaxation.</b> Tense a muscle group hard on the in-breath, release it completely on the long out-breath. Work up the body.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <div class="n">Step 4</div>
+      <h3>Get through the next hour — ACCEPTS</h3>
+      <ul>
+        <li><b>Activities</b> — something with your hands that needs a little attention.</li>
+        <li><b>Contributing</b> — do one small thing for someone else.</li>
+        <li><b>Comparisons</b> — a time you got through something like this.</li>
+        <li><b>Emotions</b> — put on something that makes you feel a different thing on purpose.</li>
+        <li><b>Pushing away</b> — box it, shelve it, set a time to come back to it.</li>
+        <li><b>Thoughts</b> — count, name things, follow a plot.</li>
+        <li><b>Sensations</b> — sound, texture, smell, taste. Nothing that hurts.</li>
+      </ul>
+      <p>Then self-soothe through the five senses, gently: something warm to drink, a good smell, a familiar album, soft fabric, a view out a window.</p>
+    </div>
+
+    <div class="step">
+      <div class="n">Step 5</div>
+      <h3>Pros and cons, honestly</h3>
+      <p>Not the sanitised version. What acting on the urge would give you in the next ten minutes, what it would cost you tomorrow, next month, and with the people in step 6. Write it in a mood entry if it helps to see it.</p>
+    </div>
+
+    <div class="step">
+      <div class="n">Step 6</div>
+      <h3>Tell someone it's bad right now</h3>
+      <p>You don't have to explain it well. "It's bad tonight, can you stay on the phone" is a complete sentence.</p>
+      <div id="crisisContacts"></div>
+      <div class="row">
+        <button class="ghost" id="ccAdd">Add a person</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="n">Step 7</div>
+      <h3>Lines that answer</h3>
+      <a class="call" href="tel:880028888"><b>8 800 28 888</b><small>Jaunimo linija — free, anonymous, 24/7. Chat at jaunimolinija.lt, 18:00–24:00.</small></a>
+      <a class="call" href="tel:116123"><b>116 123</b><small>Vilties linija — free and confidential, 24/7, for adults.</small></a>
+      <a class="call" href="tel:112"><b>112</b><small>If you can't keep yourself safe, or you've already hurt yourself. Answers in Lithuanian, English, Russian and Polish.</small></a>
+      <p class="hint">Add your own crisis team, ward, or on-call number below and it stays on this page.</p>
+      <div id="crisisNumbers"></div>
+      <div class="row"><button class="ghost" id="cnAdd">Add a number</button></div>
+    </div>
+  </div>
+
+  <div class="eyebrow">Written by you, for this moment</div>
+  <label for="cSigns">What it looks like when I'm heading there</label>
+  <textarea id="cSigns" class="short" placeholder="Early signs other people might notice before you do."></textarea>
+  <label for="cWorks">What has actually worked before</label>
+  <textarea id="cWorks" class="short" placeholder="Not what should work. What did."></textarea>
+  <label for="cReasons">Reasons to stay, in your own words</label>
+  <textarea id="cReasons" class="short" placeholder="People, animals, unfinished things, small future dates."></textarea>
+  <label for="cSafe">Where I go and who I'm with</label>
+  <textarea id="cSafe" class="short" placeholder="Places and people that make it harder to act on it."></textarea>
+  <div class="row">
+    <button class="act" id="cSave">Save my plan</button>
+    <button class="ghost" data-go="today">Back</button>
+  </div>
+</section>
+
+<!-- ===================== DATA ===================== -->
+<section id="data" hidden>
+  <h1>Data</h1>
+  <p class="sub">Everything lives on this device only. Nothing is sent anywhere.</p>
+  <div class="card" id="storageWarn" hidden></div>
+
+  <label for="titleInput">What this is called</label>
+  <input type="text" id="titleInput" placeholder="Case File">
+  <p class="hint">Changes the name at the top and the browser tab, in case someone looks over your shoulder.</p>
+
+  <div class="eyebrow">Screen lock</div>
+  <label for="pinInput">Numeric code</label>
+  <input type="password" id="pinInput" inputmode="numeric" placeholder="Leave empty for no lock">
+  <p class="hint">This hides the screen behind a code. It is not encryption — someone determined and technical could still read the file. Treat it as a curtain, not a safe.</p>
+  <div class="row"><button class="act" id="saveSettings">Save settings</button></div>
+
+  <hr class="rule">
+  <div class="eyebrow">Backup</div>
+  <p class="hint" style="margin-bottom:12px">Clearing your browser data will erase everything here. Export every so often and keep the file somewhere you trust.</p>
+  <div class="row">
+    <button class="act" id="exportBtn">Export backup file</button>
+    <button class="ghost" id="importBtn">Import a backup</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </div>
+  <div class="row">
+    <button class="ghost" id="printBtn">Print / save as PDF</button>
+  </div>
+
+  <hr class="rule">
+  <div class="eyebrow">Theme</div>
+  <div class="row" style="margin-top:0"><button class="ghost" id="themeBtn">Switch to daylight</button></div>
+
+  <hr class="rule">
+  <div class="eyebrow">Erase</div>
+  <div class="row" style="margin-top:0"><button class="ghost danger" id="wipeBtn">Delete everything</button></div>
+</section>
+
+</main>
+<div id="toast"></div>
+<script>
+"use strict";
+
+/* ============ constants ============ */
+const URGES=[
+ {k:"sh",  label:"Self-harm urge",              short:"SH",   lo:"Not there",  hi:"Barely resisting"},
+ {k:"sad", label:"Sadistic urges",              short:"SAD",  lo:"Not there",  hi:"Loud and constant"},
+ {k:"si",  label:"Suicidal thoughts",           short:"SI",   lo:"Not there",  hi:"Constant, with intent"},
+ {k:"give",label:"Urge to give up on healing",  short:"GIVE", lo:"Still in it",hi:"Done trying"},
+ {k:"sub", label:"Urge to use substances",      short:"SUB",  lo:"Not there",  hi:"Barely resisting"}
+];
+const THRESHOLD=4;
+
+const PREP_CATS=["Memories","Sleep quality","Hallucinations","Sadistic thoughts","Masochistic thoughts","Self-destructive / self-harm thoughts","Honesty & disclosure","Meds & side effects","Other"];
+
+const EMOTIONS=["Anger","Shame","Emptiness","Fear","Grief","Disgust","Envy","Guilt","Numb","Dissociated","Panic","Rage","Rejected","Abandoned","Hopeless","Irritable","Restless","Relief","Calm","Hypomanic"];
+
+const LIE_WITH=["Partner","Family","My sister","Therapist","Psychiatrist","Doctor / nurse","Friend","Stranger","Online","Work / school","Myself"];
+
+const LIE_FORM=["Said something false","Left something out","Exaggerated","Minimised","Let an assumption stand","Invented a whole story"];
+
+const LIE_FUNC=[
+ "It was out before I decided",
+ "Avoiding a consequence",
+ "Avoiding disappointing them",
+ "Managing how they see me",
+ "Making the story better",
+ "Protecting someone else",
+ "Keeping someone out of my business",
+ "Hiding how bad it is",
+ "Matching what they wanted to hear",
+ "Seeing if they'd notice",
+ "Filling a gap I'm ashamed of",
+ "No idea yet"
+];
+
+const LIE_FIX={open:"Still standing",caught:"They caught it",fixed:"Corrected",want:"Wants correcting",keep:"Keeping it"};
+
+const DISTORTIONS=[
+ {id:"bw",name:"All-or-nothing thinking",short:"B/W",
+  def:"Only two settings exist: perfect or ruined, everyone or no one. The middle of the scale disappears.",
+  ex:"I missed one session, so the whole thing was pointless.",
+  pats:[/\b(always|never|nothing|everything|everyone|no ?one|nobody|completely|totally|entirely|utterly|forever|all the time|every ?single time)\b/gi,/\b(visada|niekada|niekas|visi|nieko)\b/gi,/\b(всегда|никогда|никто|все|ничего)\b/gi]},
+ {id:"over",name:"Overgeneralising",short:"GEN",
+  def:"One event becomes a rule about how things always go.",
+  ex:"Of course they cancelled. This is what happens.",
+  pats:[/\b(as usual|typical|of course|again and again|every ?time|it always happens|story of my life)\b/gi]},
+ {id:"mind",name:"Mind reading",short:"MIND",
+  def:"You treat a guess about what someone thinks as a fact you've confirmed.",
+  ex:"She didn't reply because she's decided I'm too much.",
+  pats:[/\b((they|he|she|everyone|people|nobody|no ?one) (must )?(think|thinks|thought|knows|hates|hated|finds|find|sees|saw|assumes))\b/gi,/\b(they('| a)re judging|is judging|thinks i'?m)\b/gi]},
+ {id:"future",name:"Fortune telling",short:"FUT",
+  def:"You predict the outcome and then react to the prediction as if it already happened.",
+  ex:"There's no point starting — I'll drop out like last time.",
+  pats:[/\b(will never|won'?t ever|it'?s going to|i'?ll (never|end up|fail|lose)|there'?s no point|no point in|nothing will (change|help|work)|it won'?t work)\b/gi]},
+ {id:"cat",name:"Catastrophising",short:"CAT",
+  def:"You jump to the worst version and skip every step in between, including the ones where you cope.",
+  ex:"If I lose this flat I'm finished.",
+  pats:[/\b(disaster|catastroph\w*|ruined|the end of|i'?m finished|unbearable|can'?t survive|can'?t handle|worst( thing| case)?|falling apart|everything (is )?fall\w*)\b/gi]},
+ {id:"emo",name:"Emotional reasoning",short:"EMO",
+  def:"The feeling is taken as proof. It feels true, so it must be true.",
+  ex:"I feel like a burden, so I am one.",
+  pats:[/\b(i feel like i'?m|i feel like a|it feels (true|real|right)|because i feel|if i feel|feels like proof)\b/gi]},
+ {id:"should",name:"Should statements",short:"SHD",
+  def:"Rules about how you or others are supposed to be. Missing them produces guilt; other people missing them produces anger.",
+  ex:"I should be over this by now.",
+  pats:[/\b(should(n'?t)?|must(n'?t)?|have to|had to|ought to|supposed to|need to be)\b/gi,/\b(turėčiau|privalau)\b/gi,/\b(должен|должна)\b/gi]},
+ {id:"label",name:"Labelling",short:"LBL",
+  def:"A whole identity gets built from one behaviour. Not 'I did something bad' but 'I am bad'.",
+  ex:"I'm broken.",
+  pats:[/\bi'?m (a )?(failure|broken|worthless|disgusting|a burden|pathetic|useless|toxic|a monster|insane|crazy|damaged|nothing|unlovable|too much)\b/gi]},
+ {id:"pers",name:"Personalising",short:"PRS",
+  def:"You take responsibility for things that had other causes, or read neutral events as being about you.",
+  ex:"They were quiet all evening because of me.",
+  pats:[/\b(my fault|because of me|i ruined|i caused|i made (them|him|her|everyone)|i'?m the reason|if i hadn'?t)\b/gi]},
+ {id:"filter",name:"Mental filter",short:"FLT",
+  def:"One bad detail gets all the attention and everything else drops out of the picture.",
+  ex:"The whole day was awful — she gave me that look at breakfast.",
+  pats:[/\b(the only thing|all that matters|nothing good|the one thing|all i can (think|see))\b/gi]},
+ {id:"disq",name:"Discounting the positive",short:"DSQ",
+  def:"Good evidence gets explained away so the negative belief stays intact.",
+  ex:"They only said that to be nice.",
+  pats:[/\b(doesn'?t count|does not count|just luck|only because|being (nice|polite)|anyone could(' ?ve| have)?|it was nothing|they had to say)\b/gi]},
+ {id:"mag",name:"Magnifying and minimising",short:"MAG",
+  def:"Your mistakes get zoomed in on; your strengths and other people's flaws get zoomed out.",
+  ex:"My part was a huge failure. Their part barely mattered.",
+  pats:[/\b(huge|massive|enormous|barely matters|doesn'?t matter|not a big deal|no big deal|blown out)\b/gi]},
+ {id:"comp",name:"Unfair comparison",short:"CMP",
+  def:"You measure yourself against people whose starting point, resources or edited version you can't actually see.",
+  ex:"Everyone my age has this figured out.",
+  pats:[/\b(compared to|everyone else (is|has)|they'?re all|other people (my age|can|just)|at my age)\b/gi]},
+ {id:"fair",name:"Fairness fallacy",short:"FAIR",
+  def:"Fairness is treated as a rule the world agreed to follow. It didn't, and measuring by it keeps the pain live.",
+  ex:"It isn't fair that I have to work this hard just to be ordinary.",
+  pats:[/\b(not fair|isn'?t fair|unfair|why me|don'?t deserve|deserve better)\b/gi]},
+ {id:"blame",name:"Blaming",short:"BLM",
+  def:"All of the cause sits with someone else, which feels true and also removes anything you can change.",
+  ex:"There's nothing I can do, this is what they made me.",
+  pats:[/\b(they made me|he made me|she made me|it'?s (all )?(their|his|her) fault|nothing i can do|they did this to me)\b/gi]}
+];
+
+/* ============ storage ============ */
+const KEY="casefile.v1";
+let memFallback=null, storageOK=true;
+try{ localStorage.setItem("__t","1"); localStorage.removeItem("__t"); }catch(e){ storageOK=false; }
+
+function blank(){
+  return {settings:{title:"Case File",pin:"",theme:"night"},
+    urges:[], mood:[], thoughts:[], prep:[], sessions:[], lies:[],
+    crisis:{signs:"",works:"",reasons:"",safe:"",contacts:[],numbers:[]},
+    customEmotions:[], seq:{mood:0,thoughts:0,prep:0,sessions:0,urges:0,lies:0}};
+}
+let DB=blank();
+function load(){
+  try{
+    const raw = storageOK ? localStorage.getItem(KEY) : memFallback;
+    if(raw){ const p=JSON.parse(raw); DB=Object.assign(blank(),p);
+      DB.settings=Object.assign(blank().settings,p.settings||{});
+      DB.crisis=Object.assign(blank().crisis,p.crisis||{});
+      DB.seq=Object.assign(blank().seq,p.seq||{});
+      ["urges","mood","thoughts","prep","sessions","lies","customEmotions"].forEach(k=>{ if(!Array.isArray(DB[k])) DB[k]=[]; }); }
+  }catch(e){ console.warn("load failed",e); }
+}
+function save(){
+  const raw=JSON.stringify(DB);
+  if(storageOK){ try{ localStorage.setItem(KEY,raw); }catch(e){ storageOK=false; memFallback=raw; toast("Storage full — export a backup"); } }
+  else memFallback=raw;
+}
+function nextId(kind){ DB.seq[kind]=(DB.seq[kind]||0)+1; return DB.seq[kind]; }
+
+/* ============ helpers ============ */
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function pad(n){ return String(n).padStart(2,"0"); }
+function todayISO(d){ d=d||new Date(); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function nowLocal(){ const d=new Date(); return todayISO(d)+"T"+pad(d.getHours())+":"+pad(d.getMinutes()); }
+function fmtDate(iso){ if(!iso) return ""; const d=new Date(iso.length<=10?iso+"T00:00":iso);
+  if(isNaN(d)) return iso;
+  return d.toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"}); }
+function fmtTime(iso){ const d=new Date(iso); return isNaN(d)?"":pad(d.getHours())+":"+pad(d.getMinutes()); }
+function pips(n){ return "●".repeat(n)+"○".repeat(5-n); }
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._x); t._x=setTimeout(()=>t.classList.remove("show"),1900); }
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return todayISO(d); }
+
+/* multi-select tag picker backed by a Set */
+function tagPicker(el,options,selected,onChange){
+  el.innerHTML=options.map(o=>'<button type="button" class="tag" aria-pressed="'+(selected.has(o)?"true":"false")+'" data-tv="'+esc(o)+'">'+esc(o)+'</button>').join("");
+  el.querySelectorAll("[data-tv]").forEach(b=>b.onclick=()=>{
+    const v=b.dataset.tv;
+    if(selected.has(v)) selected.delete(v); else selected.add(v);
+    tagPicker(el,options,selected,onChange); if(onChange) onChange();
+  });
+}
+
+/* build a 1-5 picker; onPick(value) */
+function makeScale(el,value,onPick){
+  el.innerHTML="";
+  for(let i=1;i<=5;i++){
+    const b=document.createElement("button");
+    b.type="button"; b.textContent=i;
+    b.setAttribute("aria-pressed", value===i?"true":"false");
+    if(value===i) b.classList.add("lv"+i);
+    b.onclick=()=>{ onPick(i); };
+    el.appendChild(b);
+  }
+}
+
+/* ============ navigation ============ */
+function go(id){
+  $$("main > section").forEach(s=>s.hidden = s.id!==id);
+  $$("#nav button").forEach(b=>b.setAttribute("aria-current", b.dataset.go===id?"true":"false"));
+  window.scrollTo(0,0);
+  if(id==="today") renderToday();
+  if(id==="urges") renderUrges();
+  if(id==="mood") renderMoodList();
+  if(id==="thoughts") renderThoughtList();
+  if(id==="lies") renderLies();
+  if(id==="prep") renderPrep();
+  if(id==="after") renderSessions();
+  if(id==="crisis") renderCrisis();
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-go]");
+  if(b){ e.preventDefault(); go(b.dataset.go); }
+});
+
+/* ============ TODAY ============ */
+function renderToday(){
+  const t=DB.urges.find(u=>u.date===todayISO());
+  $("#todayDate").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"});
+  const moodToday=DB.mood.filter(m=>(m.when||"").slice(0,10)===todayISO()).length;
+  const thToday=DB.thoughts.filter(m=>(m.when||"").slice(0,10)===todayISO()).length;
+  const bits=[];
+  bits.push(t?"Check-in done.":"No check-in yet.");
+  if(moodToday) bits.push(moodToday+(moodToday===1?" mood entry.":" mood entries."));
+  if(thToday) bits.push(thToday+(thToday===1?" thought record.":" thought records."));
+  const liesToday=DB.lies.filter(l=>(l.when||"").slice(0,10)===todayISO()).length;
+  if(liesToday) bits.push(liesToday+(liesToday===1?" lie-log entry.":" lie-log entries."));
+  $("#todayLine").textContent=bits.join(" ");
+
+  $("#strip").innerHTML=URGES.map(u=>{
+    const v=t?t[u.k]:null;
+    return '<div class="cell"><div class="box'+(v?" on lv"+v:"")+'">'+(v?v:"–")+'</div><div class="lb">'+u.short+'</div></div>';
+  }).join("");
+
+  const sel=$("#chartPick");
+  if(!sel.options.length){
+    sel.innerHTML=URGES.map(u=>'<option value="'+u.k+'">'+esc(u.label)+'</option>').join("");
+    sel.onchange=drawChart;
+  }
+  drawChart();
+
+  const open=DB.prep.filter(p=>!p.done);
+  $("#todayPrep").innerHTML = open.length
+    ? open.slice(0,5).map(p=>'<div class="entry"><div class="meta"><span class="num">Nr. '+pad(p.id)+'</span><span>'+esc(p.cat)+'</span></div><p>'+esc(p.text)+'</p></div>').join("")
+      + (open.length>5?'<p class="hint">+ '+(open.length-5)+' more on the session prep page.</p>':"")
+    : '<p class="empty">Nothing queued for your next appointment yet.</p>';
+}
+
+function drawChart(){
+  const k=$("#chartPick").value||URGES[0].k;
+  const days=[]; for(let i=13;i>=0;i--) days.push(daysAgo(i));
+  const pts=days.map((d,i)=>{ const r=DB.urges.find(u=>u.date===d); return r&&r[k]?{x:i,y:r[k]}:null; });
+  const W=600,H=150,padL=8,padR=8,padT=12,padB=12;
+  const X=i=>padL+(i/13)*(W-padL-padR);
+  const Y=v=>padT+((5-v)/4)*(H-padT-padB);
+  let svg="";
+  for(let v=1;v<=5;v++) svg+='<line class="grid" x1="0" y1="'+Y(v).toFixed(1)+'" x2="'+W+'" y2="'+Y(v).toFixed(1)+'" opacity="'+(v===1?0.9:0.45)+'"/>';
+  let seg=[];
+  const flush=()=>{ if(seg.length>1) svg+='<polyline class="ln" points="'+seg.map(p=>X(p.x).toFixed(1)+","+Y(p.y).toFixed(1)).join(" ")+'"/>'; seg=[]; };
+  pts.forEach(p=>{ if(p) seg.push(p); else flush(); }); flush();
+  pts.forEach(p=>{ if(p) svg+='<circle class="dot" cx="'+X(p.x).toFixed(1)+'" cy="'+Y(p.y).toFixed(1)+'" r="3.2"/>'; });
+  if(!pts.some(Boolean)) svg+='<text x="'+(W/2)+'" y="'+(H/2)+'" text-anchor="middle" fill="#8b93a7" font-size="13" font-family="monospace">no data yet</text>';
+  $("#chart").innerHTML=svg;
+  $("#chartFrom").textContent=fmtDate(days[0]);
+  $("#chartTo").textContent="Today";
+}
+
+/* ============ URGES ============ */
+let urgeDraft={};
+function renderUrges(){
+  if(!$("#urgeDate").value) $("#urgeDate").value=todayISO();
+  const d=$("#urgeDate").value;
+  const found=DB.urges.find(u=>u.date===d);
+  urgeDraft = found ? Object.assign({},found) : {date:d};
+  $("#urgeNote").value=urgeDraft.note||"";
+  $("#urgeExists").textContent = found ? "Editing the entry already saved for this date." : "";
+  buildUrgeScales();
+  renderUrgeList();
+}
+function buildUrgeScales(){
+  const box=$("#urgeScales"); box.innerHTML="";
+  URGES.forEach(u=>{
+    const w=document.createElement("div"); w.className="scaleWrap"; w.style.marginTop="18px";
+    w.innerHTML='<div class="top"><span>'+esc(u.label)+'</span><span class="v"></span></div><div class="scale"></div>'
+      +'<div class="anchors"><span>1 · '+esc(u.lo)+'</span><span>5 · '+esc(u.hi)+'</span></div>';
+    const scaleEl=w.querySelector(".scale"), vEl=w.querySelector(".v");
+    const paint=()=>{ makeScale(scaleEl,urgeDraft[u.k]||null,v=>{ urgeDraft[u.k]=v; paint(); });
+      vEl.textContent=urgeDraft[u.k]?urgeDraft[u.k]+"/5":"—"; };
+    paint(); box.appendChild(w);
+  });
+}
+$("#urgeDate").addEventListener("change",renderUrges);
+$("#urgeSave").addEventListener("click",()=>{
+  const missing=URGES.filter(u=>!urgeDraft[u.k]);
+  if(missing.length===URGES.length){ toast("Rate at least one"); return; }
+  urgeDraft.note=$("#urgeNote").value.trim();
+  const i=DB.urges.findIndex(u=>u.date===urgeDraft.date);
+  if(i>=0) DB.urges[i]=urgeDraft; else { urgeDraft.id=nextId("urges"); DB.urges.push(urgeDraft); }
+  DB.urges.sort((a,b)=>b.date.localeCompare(a.date));
+  save();
+  const hits=URGES.filter(u=>(urgeDraft[u.k]||0)>=THRESHOLD);
+  if(hits.length){ openCrisis(hits.map(h=>h.label+" at "+urgeDraft[h.k])); }
+  else { toast("Check-in saved"); renderUrges(); renderToday(); }
+});
+function renderUrgeList(){
+  const el=$("#urgeList");
+  if(!DB.urges.length){ el.innerHTML='<p class="empty">No check-ins yet.</p>'; return; }
+  el.innerHTML=DB.urges.slice(0,60).map(u=>{
+    const cells=URGES.map(x=>'<div class="cell"><div class="box'+(u[x.k]?" on lv"+u[x.k]:"")+'">'+(u[x.k]||"–")+'</div><div class="lb">'+x.short+'</div></div>').join("");
+    return '<div class="entry"><div class="meta"><span>'+fmtDate(u.date)+'</span></div>'
+      +'<div class="strip">'+cells+'</div>'
+      +(u.note?'<p>'+esc(u.note)+'</p>':"")
+      +'<div class="rowend"><button class="linkbtn del" data-del-urge="'+esc(u.date)+'">Delete</button></div></div>';
+  }).join("");
+  el.querySelectorAll("[data-del-urge]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Delete the check-in for "+fmtDate(b.dataset.delUrge)+"?")) return;
+    DB.urges=DB.urges.filter(u=>u.date!==b.dataset.delUrge); save(); renderUrges(); renderToday();
+  });
+}
+
+/* ============ CRISIS ============ */
+let pendingCrisis=null;
+function openCrisis(reasons){ pendingCrisis=reasons&&reasons.length?reasons:null; go("crisis"); }
+function renderCrisis(){
+  const a=$("#crisisAlert");
+  if(pendingCrisis){
+    a.hidden=false;
+    a.innerHTML='<div class="alertbar"><b>You rated '+esc(pendingCrisis.join(", "))+'.</b><br>That is the number where you said you wanted this page opened for you. Work down it. You can leave whenever you want.</div>';
+    pendingCrisis=null;
+  } else { a.hidden=true; a.innerHTML=""; }
+  const c=DB.crisis;
+  $("#cSigns").value=c.signs||""; $("#cWorks").value=c.works||"";
+  $("#cReasons").value=c.reasons||""; $("#cSafe").value=c.safe||"";
+  const cc=$("#crisisContacts");
+  cc.innerHTML=(c.contacts||[]).map((p,i)=>
+    '<a class="call" href="tel:'+esc((p.tel||"").replace(/\s/g,""))+'"><b>'+esc(p.name||"Unnamed")+'</b><small>'+esc(p.tel||"")+(p.note?" · "+esc(p.note):"")+'</small></a>'
+    +'<div class="rowend"><button class="linkbtn del" data-rmc="'+i+'">Remove</button></div>').join("")
+    || '<p class="hint">No one added yet. Even one name here changes what this page can do.</p>';
+  cc.querySelectorAll("[data-rmc]").forEach(b=>b.onclick=()=>{ c.contacts.splice(+b.dataset.rmc,1); save(); renderCrisis(); });
+  const cn=$("#crisisNumbers");
+  cn.innerHTML=(c.numbers||[]).map((p,i)=>
+    '<a class="call" href="tel:'+esc((p.tel||"").replace(/\s/g,""))+'"><b>'+esc(p.tel||"")+'</b><small>'+esc(p.name||"")+'</small></a>'
+    +'<div class="rowend"><button class="linkbtn del" data-rmn="'+i+'">Remove</button></div>').join("");
+  cn.querySelectorAll("[data-rmn]").forEach(b=>b.onclick=()=>{ c.numbers.splice(+b.dataset.rmn,1); save(); renderCrisis(); });
+}
+$("#ccAdd").addEventListener("click",()=>{
+  const name=prompt("Name"); if(!name) return;
+  const tel=prompt("Phone number for "+name)||"";
+  const note=prompt("Anything to remember about calling them? (optional)")||"";
+  DB.crisis.contacts.push({name,tel,note}); save(); renderCrisis();
+});
+$("#cnAdd").addEventListener("click",()=>{
+  const tel=prompt("Number"); if(!tel) return;
+  const name=prompt("What is this number?")||"";
+  DB.crisis.numbers.push({name,tel}); save(); renderCrisis();
+});
+$("#cSave").addEventListener("click",()=>{
+  DB.crisis.signs=$("#cSigns").value; DB.crisis.works=$("#cWorks").value;
+  DB.crisis.reasons=$("#cReasons").value; DB.crisis.safe=$("#cSafe").value;
+  save(); toast("Plan saved");
+});
+
+/* ============ MOOD & TRIGGERS ============ */
+let mSel=new Set(), mInt=null, mEditId=null;
+function renderEmotionTags(){
+  const all=EMOTIONS.concat(DB.customEmotions||[]);
+  $("#mEmotions").innerHTML=all.map(e=>'<button type="button" class="tag" aria-pressed="'+(mSel.has(e)?"true":"false")+'" data-emo="'+esc(e)+'">'+esc(e)+'</button>').join("");
+  $("#mEmotions").querySelectorAll("[data-emo]").forEach(b=>b.onclick=()=>{
+    const v=b.dataset.emo; if(mSel.has(v)) mSel.delete(v); else mSel.add(v); renderEmotionTags();
+  });
+}
+$("#mEmotionAdd").addEventListener("keydown",e=>{
+  if(e.key!=="Enter") return; e.preventDefault();
+  const v=e.target.value.trim(); if(!v) return;
+  if(!EMOTIONS.includes(v)&&!DB.customEmotions.includes(v)){ DB.customEmotions.push(v); save(); }
+  mSel.add(v); e.target.value=""; renderEmotionTags();
+});
+function paintMoodIntensity(){
+  makeScale($("#mIntensity"),mInt,v=>{ mInt=v; paintMoodIntensity(); });
+  $("#mIntLabel").textContent=mInt?mInt+"/5":"—";
+}
+function resetMood(){
+  mSel=new Set(); mInt=null; mEditId=null;
+  ["#mTitle","#mTrigger","#mBody","#mReview","#mDid"].forEach(s=>$(s).value="");
+  $("#mWhen").value=nowLocal(); $("#mCancel").hidden=true;
+  renderEmotionTags(); paintMoodIntensity();
+}
+$("#mCancel").addEventListener("click",resetMood);
+$("#mSave").addEventListener("click",()=>{
+  const title=$("#mTitle").value.trim(), review=$("#mReview").value.trim();
+  if(!title&&!review){ toast("Give it a title or a few words"); return; }
+  const rec={ id:mEditId||nextId("mood"), title, when:$("#mWhen").value||nowLocal(),
+    emotions:Array.from(mSel), intensity:mInt, trigger:$("#mTrigger").value.trim(),
+    body:$("#mBody").value.trim(), review, did:$("#mDid").value.trim() };
+  const i=DB.mood.findIndex(x=>x.id===rec.id);
+  if(i>=0) DB.mood[i]=rec; else DB.mood.push(rec);
+  DB.mood.sort((a,b)=>(b.when||"").localeCompare(a.when||""));
+  save(); resetMood(); renderMoodList(); toast("Entry saved");
+});
+function renderMoodList(){
+  const el=$("#mList");
+  if(!DB.mood.length){ el.innerHTML='<p class="empty">No entries yet. The first one is usually the hardest to start.</p>'; return; }
+  el.innerHTML=DB.mood.map(m=>
+    '<div class="entry"><div class="meta"><span class="num">Nr. '+pad(m.id)+'</span><span>'+fmtDate(m.when)+'</span><span>'+fmtTime(m.when)+'</span>'
+    +(m.intensity?'<span class="pips">'+pips(m.intensity)+'</span>':"")+'</div>'
+    +(m.title?'<h3>'+esc(m.title)+'</h3>':"")
+    +(m.emotions&&m.emotions.length?'<div class="tags">'+m.emotions.map(x=>'<span class="tag" aria-pressed="true">'+esc(x)+'</span>').join("")+'</div>':"")
+    +(m.trigger?'<div class="lbl">Trigger</div><p>'+esc(m.trigger)+'</p>':"")
+    +(m.review?'<p>'+esc(m.review)+'</p>':"")
+    +(m.body?'<div class="lbl">In the body</div><p>'+esc(m.body)+'</p>':"")
+    +(m.did?'<div class="lbl">What I did</div><p>'+esc(m.did)+'</p>':"")
+    +'<div class="rowend"><button class="linkbtn" data-em="'+m.id+'">Edit</button><button class="linkbtn del" data-dm="'+m.id+'">Delete</button></div></div>').join("");
+  el.querySelectorAll("[data-em]").forEach(b=>b.onclick=()=>{
+    const m=DB.mood.find(x=>x.id===+b.dataset.em); if(!m) return;
+    mEditId=m.id; $("#mTitle").value=m.title||""; $("#mWhen").value=m.when||nowLocal();
+    mSel=new Set(m.emotions||[]); mInt=m.intensity||null;
+    $("#mTrigger").value=m.trigger||""; $("#mBody").value=m.body||"";
+    $("#mReview").value=m.review||""; $("#mDid").value=m.did||"";
+    $("#mCancel").hidden=false; renderEmotionTags(); paintMoodIntensity(); window.scrollTo(0,0);
+  });
+  el.querySelectorAll("[data-dm]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Delete this entry?")) return;
+    DB.mood=DB.mood.filter(x=>x.id!==+b.dataset.dm); save(); renderMoodList(); renderToday();
+  });
+}
+
+/* ============ THOUGHT RECORDS ============ */
+let tSel=new Set(), tSug=new Set(), tBelief=null, tEditId=null;
+
+function scanText(text){
+  const marks=[];
+  DISTORTIONS.forEach(d=>(d.pats||[]).forEach(p=>{
+    p.lastIndex=0; let m;
+    while((m=p.exec(text))!==null){
+      if(m[0].length===0){ p.lastIndex++; continue; }
+      marks.push({s:m.index,e:m.index+m[0].length,id:d.id,short:d.short});
+    }
+  }));
+  marks.sort((a,b)=> a.s-b.s || (b.e-b.s)-(a.e-a.s));
+  const kept=[]; let last=-1;
+  marks.forEach(m=>{ if(m.s>=last){ kept.push(m); last=m.e; } });
+  let out="",cur=0;
+  kept.forEach(m=>{
+    out+=esc(text.slice(cur,m.s));
+    out+='<mark title="'+esc((DISTORTIONS.find(d=>d.id===m.id)||{}).name||"")+'">'+esc(text.slice(m.s,m.e))+'<sup>'+esc(m.short)+'</sup></mark>';
+    cur=m.e;
+  });
+  out+=esc(text.slice(cur));
+  return {html:out, ids:new Set(kept.map(m=>m.id))};
+}
+$("#tScan").addEventListener("click",()=>{
+  const txt=$("#tRaw").value;
+  if(!txt.trim()){ toast("Write the vent first"); return; }
+  const r=scanText(txt);
+  $("#tScanBox").hidden=false; $("#tClearScan").hidden=false;
+  $("#tScanOut").innerHTML=r.html || '<span class="empty">Nothing matched.</span>';
+  tSug=r.ids; r.ids.forEach(id=>tSel.add(id));
+  renderChecks();
+  if(!r.ids.size) toast("No wording matched — check the list yourself");
+});
+$("#tClearScan").addEventListener("click",()=>{
+  $("#tScanBox").hidden=true; $("#tClearScan").hidden=true; tSug=new Set(); renderChecks();
+});
+function renderChecks(){
+  $("#tChecks").innerHTML=DISTORTIONS.map(d=>
+    '<label class="chk"><input type="checkbox" data-dz="'+d.id+'"'+(tSel.has(d.id)?" checked":"")+'>'
+    +'<span>'+esc(d.name)+(tSug.has(d.id)?'<span class="sug">suggested</span>':"")+'</span></label>').join("");
+  $("#tChecks").querySelectorAll("[data-dz]").forEach(c=>c.onchange=()=>{
+    if(c.checked) tSel.add(c.dataset.dz); else tSel.delete(c.dataset.dz);
+  });
+}
+function renderLibrary(){
+  $("#tLibrary").innerHTML=DISTORTIONS.map(d=>
+    '<details class="dist"><summary><span class="k">'+esc(d.short)+'</span>'+esc(d.name)+'</summary>'
+    +'<p>'+esc(d.def)+'</p><p class="ex">“'+esc(d.ex)+'”</p></details>').join("");
+}
+function paintBelief(){ makeScale($("#tBeliefScale"),tBelief,v=>{ tBelief=v; paintBelief(); }); }
+function resetThought(){
+  tSel=new Set(); tSug=new Set(); tBelief=null; tEditId=null;
+  ["#tRaw","#tFor","#tAgainst","#tNew"].forEach(s=>$(s).value="");
+  $("#tScanBox").hidden=true; $("#tClearScan").hidden=true; $("#tCancel").hidden=true;
+  renderChecks(); paintBelief();
+}
+$("#tCancel").addEventListener("click",resetThought);
+$("#tSave").addEventListener("click",()=>{
+  const raw=$("#tRaw").value.trim();
+  if(!raw){ toast("Nothing to save yet"); return; }
+  const rec={ id:tEditId||nextId("thoughts"), when:tEditId?(DB.thoughts.find(x=>x.id===tEditId)||{}).when||new Date().toISOString():new Date().toISOString(),
+    raw, distortions:Array.from(tSel), evFor:$("#tFor").value.trim(), evAgainst:$("#tAgainst").value.trim(),
+    rewrite:$("#tNew").value.trim(), belief:tBelief };
+  const i=DB.thoughts.findIndex(x=>x.id===rec.id);
+  if(i>=0) DB.thoughts[i]=rec; else DB.thoughts.push(rec);
+  DB.thoughts.sort((a,b)=>(b.when||"").localeCompare(a.when||""));
+  save(); resetThought(); renderThoughtList(); toast("Record saved");
+});
+function renderThoughtList(){
+  const el=$("#tList");
+  if(!DB.thoughts.length){ el.innerHTML='<p class="empty">No records yet.</p>'; return; }
+  el.innerHTML=DB.thoughts.map(t=>{
+    const names=(t.distortions||[]).map(id=>(DISTORTIONS.find(d=>d.id===id)||{}).name).filter(Boolean);
+    return '<div class="entry"><div class="meta"><span class="num">Nr. '+pad(t.id)+'</span><span>'+fmtDate(t.when)+'</span><span>'+fmtTime(t.when)+'</span></div>'
+      +'<div class="lbl">The vent</div><p>'+esc(t.raw)+'</p>'
+      +(names.length?'<div class="lbl">Patterns</div><div class="tags">'+names.map(n=>'<span class="tag" aria-pressed="true">'+esc(n)+'</span>').join("")+'</div>':"")
+      +(t.evFor?'<div class="lbl">Supports it</div><p>'+esc(t.evFor)+'</p>':"")
+      +(t.evAgainst?'<div class="lbl">Doesn\'t fit it</div><p>'+esc(t.evAgainst)+'</p>':"")
+      +(t.rewrite?'<div class="lbl">The rewrite'+(t.belief?' · believed '+t.belief+'/5':"")+'</div><p>'+esc(t.rewrite)+'</p>':"")
+      +'<div class="rowend"><button class="linkbtn" data-et="'+t.id+'">Edit</button><button class="linkbtn del" data-dt="'+t.id+'">Delete</button></div></div>';
+  }).join("");
+  el.querySelectorAll("[data-et]").forEach(b=>b.onclick=()=>{
+    const t=DB.thoughts.find(x=>x.id===+b.dataset.et); if(!t) return;
+    tEditId=t.id; $("#tRaw").value=t.raw||""; tSel=new Set(t.distortions||[]); tSug=new Set();
+    $("#tFor").value=t.evFor||""; $("#tAgainst").value=t.evAgainst||"";
+    $("#tNew").value=t.rewrite||""; tBelief=t.belief||null;
+    $("#tCancel").hidden=false; renderChecks(); paintBelief(); window.scrollTo(0,0);
+  });
+  el.querySelectorAll("[data-dt]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Delete this record?")) return;
+    DB.thoughts=DB.thoughts.filter(x=>x.id!==+b.dataset.dt); save(); renderThoughtList(); renderToday();
+  });
+}
+
+/* ============ LIE LOG ============ */
+let lWith=new Set(), lForm=new Set(), lFunc=new Set(), lAuto=null, lEditId=null;
+
+function paintLieAuto(){
+  makeScale($("#lAuto"),lAuto,v=>{ lAuto=v; paintLieAuto(); });
+  $("#lAutoLabel").textContent=lAuto?lAuto+"/5":"—";
+}
+function paintLieTags(){
+  tagPicker($("#lWith"),LIE_WITH,lWith);
+  tagPicker($("#lForm"),LIE_FORM,lForm);
+  tagPicker($("#lFunc"),LIE_FUNC,lFunc);
+}
+function resetLie(){
+  lWith=new Set(); lForm=new Set(); lFunc=new Set(); lAuto=null; lEditId=null;
+  ["#lSaid","#lTrue","#lBefore","#lAfter","#lCost","#lNote"].forEach(x=>$(x).value="");
+  $("#lWhen").value=nowLocal(); $("#lFix").value="open"; $("#lCancel").hidden=true;
+  paintLieTags(); paintLieAuto();
+}
+function renderLies(){
+  if(!$("#lWhen").value) $("#lWhen").value=nowLocal();
+  paintLieTags(); paintLieAuto(); renderLieStats(); renderLieList();
+}
+$("#lCancel").addEventListener("click",resetLie);
+$("#lSave").addEventListener("click",()=>{
+  const said=$("#lSaid").value.trim(), truth=$("#lTrue").value.trim();
+  if(!said&&!truth){ toast("Write what was said, or what was true"); return; }
+  const rec={ id:lEditId||nextId("lies"), when:$("#lWhen").value||nowLocal(),
+    with:Array.from(lWith), said, truth, form:Array.from(lForm), before:$("#lBefore").value.trim(),
+    func:Array.from(lFunc), auto:lAuto, after:$("#lAfter").value.trim(),
+    cost:$("#lCost").value.trim(), fix:$("#lFix").value, note:$("#lNote").value.trim() };
+  const i=DB.lies.findIndex(x=>x.id===rec.id);
+  if(i>=0) DB.lies[i]=rec; else DB.lies.push(rec);
+  DB.lies.sort((a,b)=>(b.when||"").localeCompare(a.when||""));
+  save(); resetLie(); renderLieStats(); renderLieList(); renderToday(); toast("Entry saved");
+});
+
+function tally(rows,key){
+  const c={};
+  rows.forEach(r=>(r[key]||[]).forEach(v=>{ c[v]=(c[v]||0)+1; }));
+  return Object.keys(c).map(k=>({k,n:c[k]})).sort((a,b)=>b.n-a.n);
+}
+function bars(list,total){
+  if(!list.length) return '<p class="hint">Nothing tagged yet.</p>';
+  return list.slice(0,6).map(x=>
+    '<div class="statrow"><span class="nm">'+esc(x.k)+'</span><span class="ct">'+x.n+'</span>'
+    +'<span class="statbar"><i style="width:'+Math.round(x.n/total*100)+'%"></i></span></div>').join("");
+}
+function renderLieStats(){
+  const el=$("#lStats"), rows=DB.lies;
+  if(rows.length<2){
+    el.innerHTML='<p class="hint">The readout appears once there are a couple of entries to compare. One entry is an incident; several are a pattern.</p>';
+    return;
+  }
+  const fn=tally(rows,"func"), wh=tally(rows,"with");
+  const autos=rows.map(r=>r.auto).filter(Boolean);
+  const avg=autos.length?(autos.reduce((a,b)=>a+b,0)/autos.length):null;
+  const standing=rows.filter(r=>r.fix==="open").length;
+  const fixed=rows.filter(r=>r.fix==="fixed").length;
+  const want=rows.filter(r=>r.fix==="want").length;
+  let read=rows.length+" entries. ";
+  if(wh[0]) read+='Most often with <b>'+esc(wh[0].k.toLowerCase())+'</b>. ';
+  if(fn[0]) read+='Most often doing the job of <b>'+esc(fn[0].k.toLowerCase())+'</b>. ';
+  if(avg) read+='Average automaticity <b>'+avg.toFixed(1)+'/5</b>'+(avg>=4?' — mostly faster than the decision.':avg<=2?' — mostly chosen.':'.')+' ';
+  el.innerHTML='<p class="readout">'+read+'</p>'
+    +'<div class="eyebrow" style="margin-top:0">What they were for</div>'+bars(fn,rows.length)
+    +'<div class="eyebrow">Who they were with</div>'+bars(wh,rows.length)
+    +'<div class="eyebrow">Where they stand</div>'
+    +'<p class="hint">'+standing+' still standing · '+want+' you want to correct · '+fixed+' corrected.</p>';
+}
+function renderLieList(){
+  const el=$("#lList");
+  if(!DB.lies.length){ el.innerHTML='<p class="empty">Nothing logged yet.</p>'; return; }
+  el.innerHTML=DB.lies.map(l=>
+    '<div class="entry"><div class="meta"><span class="num">Nr. '+pad(l.id)+'</span><span>'+fmtDate(l.when)+'</span><span>'+fmtTime(l.when)+'</span>'
+    +(l.with&&l.with.length?'<span>'+esc(l.with.join(", "))+'</span>':"")
+    +'<span style="color:var(--brass-dim)">'+esc(LIE_FIX[l.fix]||"")+'</span></div>'
+    +(l.said?'<div class="lbl">Said</div><p>'+esc(l.said)+'</p>':"")
+    +(l.truth?'<div class="lbl">True</div><p>'+esc(l.truth)+'</p>':"")
+    +(l.before?'<div class="lbl">Just before</div><p>'+esc(l.before)+'</p>':"")
+    +((l.func&&l.func.length)||l.auto?'<div class="lbl">The job it did'+(l.auto?' · '+l.auto+'/5 automatic':"")+'</div>':"")
+    +(l.func&&l.func.length?'<div class="tags">'+l.func.map(x=>'<span class="tag" aria-pressed="true">'+esc(x)+'</span>').join("")+'</div>':"")
+    +(l.form&&l.form.length?'<div class="tags" style="margin-top:6px">'+l.form.map(x=>'<span class="tag">'+esc(x)+'</span>').join("")+'</div>':"")
+    +(l.after?'<div class="lbl">Straight after</div><p>'+esc(l.after)+'</p>':"")
+    +(l.cost?'<div class="lbl">Cost</div><p>'+esc(l.cost)+'</p>':"")
+    +(l.note?'<p>'+esc(l.note)+'</p>':"")
+    +'<div class="rowend"><button class="linkbtn" data-el="'+l.id+'">Edit</button>'
+    +'<button class="linkbtn" data-pl="'+l.id+'">Send to session prep</button>'
+    +'<button class="linkbtn del" data-dl="'+l.id+'">Delete</button></div></div>').join("");
+
+  el.querySelectorAll("[data-el]").forEach(b=>b.onclick=()=>{
+    const l=DB.lies.find(x=>x.id===+b.dataset.el); if(!l) return;
+    lEditId=l.id; $("#lWhen").value=l.when||nowLocal();
+    lWith=new Set(l.with||[]); lForm=new Set(l.form||[]); lFunc=new Set(l.func||[]); lAuto=l.auto||null;
+    $("#lSaid").value=l.said||""; $("#lTrue").value=l.truth||""; $("#lBefore").value=l.before||"";
+    $("#lAfter").value=l.after||""; $("#lCost").value=l.cost||""; $("#lFix").value=l.fix||"open";
+    $("#lNote").value=l.note||"";
+    $("#lCancel").hidden=false; paintLieTags(); paintLieAuto(); window.scrollTo(0,0);
+  });
+  el.querySelectorAll("[data-pl]").forEach(b=>b.onclick=()=>{
+    const l=DB.lies.find(x=>x.id===+b.dataset.pl); if(!l) return;
+    const txt="Lie log Nr. "+pad(l.id)+" ("+fmtDate(l.when)+(l.with&&l.with.length?", with "+l.with.join(", "):"")+"). "
+      +(l.said?"Said: "+l.said+" ":"")+(l.truth?"True: "+l.truth+" ":"")
+      +(l.func&&l.func.length?"I think it was doing: "+l.func.join("; ")+".":"");
+    DB.prep.push({id:nextId("prep"),cat:"Honesty & disclosure",text:txt.trim(),why:"",done:false,added:new Date().toISOString()});
+    save(); toast("Added to session prep");
+  });
+  el.querySelectorAll("[data-dl]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Delete this entry?")) return;
+    DB.lies=DB.lies.filter(x=>x.id!==+b.dataset.dl); save(); renderLieStats(); renderLieList(); renderToday();
+  });
+}
+
+/* ============ SESSION PREP ============ */
+function renderPrep(){
+  const cat=$("#pCat");
+  if(!cat.options.length) cat.innerHTML=PREP_CATS.map(c=>'<option>'+esc(c)+'</option>').join("");
+  const f=$("#pFilter");
+  if(!f.options.length){
+    f.innerHTML='<option value="open">Still to raise</option><option value="all">Everything</option><option value="done">Already raised</option>'
+      +PREP_CATS.map(c=>'<option value="cat:'+esc(c)+'">'+esc(c)+'</option>').join("");
+    f.onchange=renderPrepList;
+  }
+  renderPrepList();
+}
+$("#pSave").addEventListener("click",()=>{
+  const text=$("#pText").value.trim();
+  if(!text){ toast("Write what you want to say"); return; }
+  DB.prep.push({id:nextId("prep"),cat:$("#pCat").value,text,why:$("#pWhy").value.trim(),done:false,added:new Date().toISOString()});
+  save(); $("#pText").value=""; $("#pWhy").value=""; renderPrepList(); renderToday(); toast("Added");
+});
+function prepFiltered(){
+  const v=$("#pFilter").value||"open";
+  if(v==="all") return DB.prep;
+  if(v==="done") return DB.prep.filter(p=>p.done);
+  if(v.startsWith("cat:")) return DB.prep.filter(p=>p.cat===v.slice(4));
+  return DB.prep.filter(p=>!p.done);
+}
+function renderPrepList(){
+  const list=prepFiltered(), el=$("#pList");
+  if(!list.length){ el.innerHTML='<p class="empty">Nothing here.</p>'; return; }
+  const groups={};
+  list.forEach(p=>{ (groups[p.cat]=groups[p.cat]||[]).push(p); });
+  el.innerHTML=Object.keys(groups).map(cat=>
+    '<div class="eyebrow">'+esc(cat)+'</div>'+groups[cat].map(p=>
+      '<div class="entry"><div class="meta"><span class="num">Nr. '+pad(p.id)+'</span><span>'+fmtDate(p.added)+'</span>'+(p.done?'<span style="color:var(--l1)">raised</span>':"")+'</div>'
+      +'<p>'+esc(p.text)+'</p>'
+      +(p.why?'<div class="lbl">Why</div><p>'+esc(p.why)+'</p>':"")
+      +'<div class="rowend"><button class="linkbtn" data-tp="'+p.id+'">'+(p.done?"Mark unraised":"Mark as raised")+'</button><button class="linkbtn del" data-dp="'+p.id+'">Delete</button></div></div>').join("")).join("");
+  el.querySelectorAll("[data-tp]").forEach(b=>b.onclick=()=>{
+    const p=DB.prep.find(x=>x.id===+b.dataset.tp); p.done=!p.done; save(); renderPrepList(); renderToday();
+  });
+  el.querySelectorAll("[data-dp]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Delete this item?")) return;
+    DB.prep=DB.prep.filter(x=>x.id!==+b.dataset.dp); save(); renderPrepList(); renderToday();
+  });
+}
+$("#pCopy").addEventListener("click",()=>{
+  const open=DB.prep.filter(p=>!p.done);
+  const recent=DB.urges.slice(0,14);
+  let out="SESSION PREP — "+fmtDate(todayISO())+"\n\n";
+  if(open.length){
+    PREP_CATS.forEach(c=>{
+      const items=open.filter(p=>p.cat===c); if(!items.length) return;
+      out+=c.toUpperCase()+"\n";
+      items.forEach(p=>{ out+="  - "+p.text.replace(/\n/g," ")+(p.why?"   [why: "+p.why+"]":"")+"\n"; });
+      out+="\n";
+    });
+  } else out+="(nothing queued)\n\n";
+  if(recent.length){
+    out+="URGE RATINGS, LAST "+recent.length+" CHECK-IN"+(recent.length===1?"":"S")+" (1-5)\n";
+    out+="date       "+URGES.map(u=>u.short.padEnd(5)).join("")+"\n";
+    recent.forEach(r=>{ out+=r.date+" "+URGES.map(u=>String(r[u.k]||"-").padEnd(5)).join("")+"\n"; });
+    const peak={}; URGES.forEach(u=>{ peak[u.k]=Math.max(0,...recent.map(r=>r[u.k]||0)); });
+    out+="peak       "+URGES.map(u=>String(peak[u.k]||"-").padEnd(5)).join("")+"\n\n";
+  }
+  const mood=DB.mood.slice(0,8);
+  if(mood.length){
+    out+="RECENT MOOD / TRIGGER ENTRIES\n";
+    mood.forEach(m=>{ out+="  "+(m.when||"").slice(0,16).replace("T"," ")+" · "+(m.title||"untitled")+" · "+(m.intensity||"-")+"/5"
+      +(m.emotions&&m.emotions.length?" · "+m.emotions.join(", "):"")+(m.trigger?"\n      trigger: "+m.trigger:"")+"\n"; });
+  }
+  if(DB.lies.length){
+    const fn=tally(DB.lies,"func"), wh=tally(DB.lies,"with");
+    const autos=DB.lies.map(r=>r.auto).filter(Boolean);
+    out+="\nLIE LOG — "+DB.lies.length+" entries\n";
+    if(wh[0]) out+="  most often with: "+wh[0].k+" ("+wh[0].n+")\n";
+    if(fn.length) out+="  most common function: "+fn.slice(0,3).map(f=>f.k+" ("+f.n+")").join("; ")+"\n";
+    if(autos.length) out+="  average automaticity: "+(autos.reduce((a,b)=>a+b,0)/autos.length).toFixed(1)+"/5\n";
+    out+="  still standing: "+DB.lies.filter(r=>r.fix==="open").length+" · want to correct: "+DB.lies.filter(r=>r.fix==="want").length+"\n";
+  }
+  navigator.clipboard.writeText(out).then(()=>toast("Prep sheet copied"),()=>{
+    const w=window.open("","_blank"); if(w){ w.document.write("<pre>"+esc(out)+"</pre>"); w.document.close(); }
+  });
+});
+
+/* ============ AFTER SESSION ============ */
+let aRateVal=null, aEditId=null;
+function paintARate(){ makeScale($("#aRate"),aRateVal,v=>{aRateVal=v;paintARate();}); $("#aRateLabel").textContent=aRateVal?aRateVal+"/5":"—"; }
+function resetSession(){
+  aEditId=null; aRateVal=null;
+  ["#aWho","#aShared","#aHeld","#aFeel","#aNext"].forEach(s=>$(s).value="");
+  $("#aWhen").value=todayISO(); $("#aCancel").hidden=true; paintARate();
+}
+$("#aCancel").addEventListener("click",resetSession);
+$("#aSave").addEventListener("click",()=>{
+  const shared=$("#aShared").value.trim();
+  if(!shared&&!$("#aFeel").value.trim()){ toast("Write something first"); return; }
+  const rec={id:aEditId||nextId("sessions"),date:$("#aWhen").value||todayISO(),who:$("#aWho").value.trim(),
+    shared,held:$("#aHeld").value.trim(),feel:$("#aFeel").value.trim(),next:$("#aNext").value.trim(),rate:aRateVal};
+  const i=DB.sessions.findIndex(x=>x.id===rec.id);
+  if(i>=0) DB.sessions[i]=rec; else DB.sessions.push(rec);
+  DB.sessions.sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  save(); resetSession(); renderSessions(); toast("Log saved");
+});
+function renderSessions(){
+  if(!$("#aWhen").value) $("#aWhen").value=todayISO();
+  const el=$("#aList");
+  if(!DB.sessions.length){ el.innerHTML='<p class="empty">No session logs yet.</p>'; return; }
+  el.innerHTML=DB.sessions.map(s=>
+    '<div class="entry"><div class="meta"><span class="num">Nr. '+pad(s.id)+'</span><span>'+fmtDate(s.date)+'</span>'
+    +(s.who?'<span>'+esc(s.who)+'</span>':"")+(s.rate?'<span class="pips">'+pips(s.rate)+'</span>':"")+'</div>'
+    +(s.shared?'<div class="lbl">Shared</div><p>'+esc(s.shared)+'</p>':"")
+    +(s.held?'<div class="lbl">Held back</div><p>'+esc(s.held)+'</p>':"")
+    +(s.feel?'<div class="lbl">After</div><p>'+esc(s.feel)+'</p>':"")
+    +(s.next?'<div class="lbl">Follow-ups</div><p>'+esc(s.next)+'</p>':"")
+    +'<div class="rowend"><button class="linkbtn" data-es="'+s.id+'">Edit</button><button class="linkbtn del" data-ds="'+s.id+'">Delete</button></div></div>').join("");
+  el.querySelectorAll("[data-es]").forEach(b=>b.onclick=()=>{
+    const s=DB.sessions.find(x=>x.id===+b.dataset.es); if(!s) return;
+    aEditId=s.id; $("#aWhen").value=s.date; $("#aWho").value=s.who||"";
+    $("#aShared").value=s.shared||""; $("#aHeld").value=s.held||"";
+    $("#aFeel").value=s.feel||""; $("#aNext").value=s.next||""; aRateVal=s.rate||null;
+    $("#aCancel").hidden=false; paintARate(); window.scrollTo(0,0);
+  });
+  el.querySelectorAll("[data-ds]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Delete this log?")) return;
+    DB.sessions=DB.sessions.filter(x=>x.id!==+b.dataset.ds); save(); renderSessions();
+  });
+}
+
+/* ============ SETTINGS / DATA ============ */
+function applySettings(){
+  const t=DB.settings.title||"Case File";
+  $("#appTitle").textContent=t; document.title=t; $("#titleInput").value=t;
+  $("#pinInput").value=DB.settings.pin||"";
+  document.documentElement.setAttribute("data-theme",DB.settings.theme||"night");
+  $("#themeBtn").textContent = (DB.settings.theme==="day") ? "Switch to night" : "Switch to daylight";
+  if(!storageOK){
+    const w=$("#storageWarn"); w.hidden=false;
+    w.innerHTML='<b>This browser is blocking local storage.</b><p class="hint">Your entries will only last until you close the tab. Open this file from a hosted address instead of a file:// path, or turn off private browsing. Export a backup before you close it.</p>';
+  }
+}
+$("#saveSettings").addEventListener("click",()=>{
+  DB.settings.title=$("#titleInput").value.trim()||"Case File";
+  DB.settings.pin=$("#pinInput").value.trim();
+  save(); applySettings(); toast("Settings saved");
+});
+$("#themeBtn").addEventListener("click",()=>{
+  DB.settings.theme = (DB.settings.theme==="day")?"night":"day"; save(); applySettings();
+});
+$("#exportBtn").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(DB,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="casefile-backup-"+todayISO()+".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+});
+$("#importBtn").addEventListener("click",()=>$("#importFile").click());
+$("#importFile").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const p=JSON.parse(r.result);
+      if(!confirm("This replaces everything currently stored. Continue?")) return;
+      DB=Object.assign(blank(),p);
+      DB.settings=Object.assign(blank().settings,p.settings||{});
+      DB.crisis=Object.assign(blank().crisis,p.crisis||{});
+      DB.seq=Object.assign(blank().seq,p.seq||{});
+      save(); applySettings(); go("today"); toast("Backup restored");
+    }catch(err){ alert("That file could not be read as a backup."); }
+  };
+  r.readAsText(f); e.target.value="";
+});
+$("#printBtn").addEventListener("click",()=>window.print());
+$("#wipeBtn").addEventListener("click",()=>{
+  if(!confirm("Delete every entry, log and plan on this device? This cannot be undone.")) return;
+  if(!confirm("Last check. Have you exported a backup?")) return;
+  DB=blank(); save(); applySettings(); resetMood(); resetThought(); resetSession(); resetLie(); go("today"); toast("Everything deleted");
+});
+
+/* ============ LOCK ============ */
+function maybeLock(){
+  if(!DB.settings.pin){ $("#lock").hidden=true; return; }
+  $("#lock").hidden=false; setTimeout(()=>$("#lockInput").focus(),50);
+}
+function tryUnlock(){
+  if($("#lockInput").value===DB.settings.pin){ $("#lock").hidden=true; $("#lockInput").value=""; $("#lockMsg").textContent=""; }
+  else { $("#lockMsg").textContent="Not that one."; $("#lockInput").value=""; }
+}
+$("#lockGo").addEventListener("click",tryUnlock);
+$("#lockInput").addEventListener("keydown",e=>{ if(e.key==="Enter") tryUnlock(); });
+
+/* ============ INIT ============ */
+load();
+applySettings();
+renderEmotionTags(); paintMoodIntensity(); renderChecks(); renderLibrary(); paintBelief();
+$("#mWhen").value=nowLocal(); $("#aWhen").value=todayISO(); $("#urgeDate").value=todayISO();
+resetLie();
+paintARate();
+go("today");
+maybeLock();
+
+if("serviceWorker" in navigator && location.protocol==="https:"){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+</script>
+</body>
+</html>
