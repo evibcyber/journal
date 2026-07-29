@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f121a">
+<meta name="theme-color" content="#131a16">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,20 +15,21 @@
 <title>Case File</title>
 <style>
 :root{
-  --ink:#0f121a; --ink2:#161a24; --ink3:#1e2331; --rule:#2b3244;
-  --paper:#e7e5df; --muted:#8b93a7; --brass:#c2a15c; --brass-dim:#6d5c34;
-  --l1:#6f8f7a; --l2:#8a9670; --l3:#b39a5e; --l4:#b8724a; --l5:#9d4a42;
+  --ink:#131a16; --ink2:#1a221d; --ink3:#222b25; --rule:#33403a;
+  --paper:#e2e6dc; --muted:#8b9a8e; --brass:#a2aa8b; --brass-dim:#63704f;
+  --l1:#7b856d; --l2:#8a9270; --l3:#a8a271; --l4:#a8834f; --l5:#9c5f4a;
   --serif:'Iowan Old Style','Palatino Linotype','Book Antiqua',Palatino,'URW Palladio L',Palatino,serif;
   --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
   --mono:ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;
   --r:3px;
 }
 html[data-theme="day"]{
-  --ink:#e9e7e0; --ink2:#f4f2ec; --ink3:#fffdf7; --rule:#cfcabb;
-  --paper:#1b1d22; --muted:#615f58; --brass:#7a5c17; --brass-dim:#9a8850;
+  --ink:#e4e7dd; --ink2:#edf0e7; --ink3:#f7f9f2; --rule:#c3cbbc;
+  --paper:#1c231e; --muted:#586158; --brass:#55663f; --brass-dim:#8b9a78;
+  --l1:#5f7053; --l2:#6d7a52; --l3:#8a7f3e; --l4:#8a6234; --l5:#8a4536;
 }
 html[data-theme="day"] button.act{color:#fff}
-html[data-theme="day"] .cell .box.on{color:#12141a}
+html[data-theme="day"] .cell .box.on{color:#f4f6ef}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 :focus-visible{outline:2px solid var(--brass);outline-offset:2px}
@@ -122,6 +123,16 @@ button.danger{border-color:var(--l5);color:var(--l5)}
   color:var(--muted);font-family:var(--mono);font-size:15px;padding:12px 0;cursor:pointer;
 }
 .scale button[aria-pressed="true"]{color:#11141b;font-weight:700;border-color:transparent}
+.scale.stars{gap:2px}
+.scale.stars button{
+  background:transparent;border:0;font-size:29px;line-height:1;padding:6px 0;
+  color:var(--rule);font-family:var(--sans);
+}
+.scale.stars button.st.lc1{color:var(--l1)}
+.scale.stars button.st.lc2{color:var(--l2)}
+.scale.stars button.st.lc3{color:var(--l3)}
+.scale.stars button.st.lc4{color:var(--l4)}
+.scale.stars button.st.lc5{color:var(--l5)}
 .scaleWrap{margin-bottom:4px}
 .scaleWrap .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .scaleWrap .top span{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
@@ -166,6 +177,23 @@ button.danger{border-color:var(--l5);color:var(--l5)}
 .statbar i{display:block;height:100%;background:var(--brass)}
 .readout{font-family:var(--serif);font-size:17px;line-height:1.6;margin:0 0 16px}
 .readout b{color:var(--brass);font-weight:400}
+
+/* ---- meds ---- */
+.medrow{display:flex;align-items:center;gap:8px;margin:7px 0}
+.medbtn{
+  flex:1;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:var(--ink3);border:1px solid var(--rule);border-radius:var(--r);
+  padding:13px 14px;cursor:pointer;color:var(--paper);font-family:var(--sans);font-size:15.5px;text-align:left;
+}
+.medbtn .st{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);flex:0 0 auto}
+.medbtn.lv1,.medbtn.lv5,.medbtn.lv3{border-color:transparent;color:#12180f}
+.medbtn.lv1 .st,.medbtn.lv3 .st{color:#12180f;opacity:.7}
+.medbtn.lv5{color:#fff}
+.medbtn.lv5 .st{color:#fff;opacity:.8}
+.medhist{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--rule)}
+.medhist .dt{flex:1;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.mpill{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;padding:3px 8px;border-radius:2px;color:#12180f}
+.mpill.lv5{color:#fff}
 
 /* ---- distortion scan ---- */
 .scanout{
@@ -214,7 +242,7 @@ details.dist p.ex{font-family:var(--serif);color:var(--paper);font-style:italic;
 #toast.show{opacity:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media print{
-  html{--ink:#fff;--ink2:#fff;--ink3:#fff;--rule:#bbb;--paper:#000;--muted:#555;--brass:#6b5214;--brass-dim:#8a7a45}
+  html{--ink:#fff;--ink2:#fff;--ink3:#fff;--rule:#bbb;--paper:#000;--muted:#555;--brass:#41512f;--brass-dim:#6c7a5c}
   header,#toast,#lock,.row,.rowend,button,input,select,textarea,label,.chart,.anchors,.sub{display:none!important}
   body{padding:0;font-size:12pt}
   .wrap{max-width:none;padding:0}
@@ -251,9 +279,13 @@ details.dist p.ex{font-family:var(--serif);color:var(--paper);font-style:italic;
     <nav id="nav">
       <button data-go="today" aria-current="true">Today</button>
       <button data-go="urges">Urge check-in</button>
+      <button data-go="meds">Meds</button>
       <button data-go="mood">Mood &amp; triggers</button>
       <button data-go="thoughts">Thought records</button>
       <button data-go="lies">Lie log</button>
+      <button data-go="analysis">Analysis</button>
+      <button data-go="food">Food</button>
+      <button data-go="body">Body</button>
       <button data-go="prep">Session prep</button>
       <button data-go="after">After session</button>
       <button data-go="crisis">Crisis</button>
@@ -444,6 +476,110 @@ details.dist p.ex{font-family:var(--serif);color:var(--paper);font-style:italic;
   <div id="lList"></div>
 </section>
 
+<!-- ===================== MEDS ===================== -->
+<section id="meds" hidden>
+  <h1>Medication</h1>
+  <p class="sub">Tap each one to cycle: not yet → taken → skipped.</p>
+  <label for="medDate">Date</label>
+  <input type="date" id="medDate">
+  <div class="eyebrow">Morning</div>
+  <div id="medMorning"></div>
+  <div class="eyebrow">Evening</div>
+  <div id="medEvening"></div>
+  <p class="hint" style="margin-top:14px">This records what you ticked, not what you swallowed. If you can't remember whether you took a dose, check with your pharmacist or your team rather than taking another.</p>
+  <div class="row">
+    <button class="ghost" id="medAddM">Add a morning med</button>
+    <button class="ghost" id="medAddE">Add an evening med</button>
+  </div>
+  <p class="hint">Phone alarms are better at reminding you than this page is — it can't send notifications.</p>
+  <hr class="rule">
+  <div class="eyebrow">Last 14 days</div>
+  <div id="medHistory"></div>
+</section>
+
+<!-- ===================== ANALYSIS ===================== -->
+<section id="analysis" hidden>
+  <h1>Analysis</h1>
+  <p class="sub">Dreams, nightmares, intrusive thoughts, quotes, fragments. Material first, interpretation second — in that order, always.</p>
+  <label for="anTitle">Title</label>
+  <input type="text" id="anTitle" placeholder="Name it so you can find it again">
+  <label for="anWhen">When</label>
+  <input type="datetime-local" id="anWhen">
+  <label>What kind</label>
+  <div class="tags" id="anKind"></div>
+  <label for="anRaw">The material</label>
+  <textarea id="anRaw" placeholder="Write it down before you interpret it. The detail you think is irrelevant is usually the one doing the work."></textarea>
+  <label for="anContext">What was going on around it</label>
+  <input type="text" id="anContext" placeholder="That day, that week, what you'd been avoiding, what you watched before bed">
+  <label for="anDuring">Feeling inside it</label>
+  <input type="text" id="anDuring">
+  <label for="anAfter">Feeling on coming out of it</label>
+  <input type="text" id="anAfter">
+  <label for="anAssoc">Associations</label>
+  <input type="text" id="anAssoc" placeholder="What it reminds you of — comma separated">
+  <label class="chk" style="border-top:0;margin-top:14px"><input type="checkbox" id="anRecur"><span>This one has come up before</span></label>
+  <label for="anWork">The analysis</label>
+  <div class="row" style="margin-top:0;margin-bottom:8px"><button class="ghost" id="anPromptBtn">Give me a question</button></div>
+  <div class="scanout" id="anPromptOut" hidden></div>
+  <textarea id="anWork" placeholder="What you think it's doing. Guesses allowed — mark them as guesses."></textarea>
+  <div class="row">
+    <button class="act" id="anSave">Save</button>
+    <button class="ghost" id="anCancel" hidden>Cancel edit</button>
+  </div>
+  <hr class="rule">
+  <div class="eyebrow">Saved</div>
+  <div id="anList"></div>
+</section>
+
+<!-- ===================== FOOD ===================== -->
+<section id="food" hidden>
+  <h1>Food diary</h1>
+  <p class="sub">No numbers here on purpose — no calories, no weights, no portions. What, when, where, and how it sat with you.</p>
+  <label for="fWhen">When</label>
+  <input type="datetime-local" id="fWhen">
+  <label>Which one</label>
+  <div class="tags" id="fMeal"></div>
+  <label for="fWhat">What I ate</label>
+  <textarea id="fWhat" class="short" placeholder="Plainly. Describing, not grading."></textarea>
+  <label for="fWhere">Where, and who with</label>
+  <input type="text" id="fWhere" placeholder="Kitchen alone, on the bus, at someone's table…">
+  <label for="fBefore">How I felt before</label>
+  <input type="text" id="fBefore">
+  <label for="fAfter">How I felt after</label>
+  <input type="text" id="fAfter">
+  <label for="fNote">Anything else</label>
+  <textarea id="fNote" class="short"></textarea>
+  <div class="row">
+    <button class="act" id="fSave">Save</button>
+    <button class="ghost" id="fCancel" hidden>Cancel edit</button>
+  </div>
+  <hr class="rule">
+  <div class="eyebrow">Entries</div>
+  <div id="fList"></div>
+</section>
+
+<!-- ===================== BODY ===================== -->
+<section id="body" hidden>
+  <h1>Body</h1>
+  <p class="sub">A weekly log. Two lists — and something that happens if the second one gets longer than the first.</p>
+  <div class="row" id="weekNav" style="margin-top:0"></div>
+
+  <div class="eyebrow">Things I did to appreciate and thank my body</div>
+  <div id="careList"></div>
+  <input type="text" id="careAdd" placeholder="Add one, press Enter">
+
+  <div class="eyebrow">Things I did that disrespected my body</div>
+  <div id="harmList"></div>
+  <input type="text" id="harmAdd" placeholder="Add one, press Enter">
+  <p class="hint">A list of actions, not a verdict on you. It's here so the other list has something to be measured against.</p>
+
+  <div id="suggestBox" hidden></div>
+
+  <label for="bNote">Notes for the week</label>
+  <textarea id="bNote" class="short" placeholder="What was going on, what made either list longer."></textarea>
+  <div class="row"><button class="act" id="bSave">Save the week</button></div>
+</section>
+
 <!-- ===================== PREP ===================== -->
 <section id="prep" hidden>
   <h1>Session prep</h1>
@@ -500,82 +636,11 @@ details.dist p.ex{font-family:var(--serif);color:var(--paper);font-style:italic;
   <div id="crisisAlert" hidden></div>
   <h1>Crisis plan</h1>
   <p class="sub">You wrote most of this when you were steadier than you are now. That version of you gets a vote.</p>
+  <div class="eyebrow" style="margin-top:0">Which one is it right now</div>
+  <div class="tags" id="crisisPick"></div>
+  <div id="crisisBody"></div>
 
-  <div class="card">
-    <div class="step" style="border-top:0">
-      <div class="n">Step 1</div>
-      <h3>Stop where you are</h3>
-      <p>Feet still. Hands empty. Don't act on it for the length of this page — that's the only commitment right now.</p>
-      <ul>
-        <li><b>S</b> — Stop. Freeze the moment.</li>
-        <li><b>T</b> — Take a step back, physically if you can.</li>
-        <li><b>O</b> — Observe. What's happening in the room, in your body, in the thought.</li>
-        <li><b>P</b> — Proceed mindfully. Pick the next step from this page, not from the urge.</li>
-      </ul>
-    </div>
-
-    <div class="step">
-      <div class="n">Step 2</div>
-      <h3>Put distance between you and harm</h3>
-      <p>Move away from anything you could use to hurt yourself. Hand it to someone, put it somewhere that takes real effort to reach, or leave the room and don't go back alone. Distance buys time, and urges lose height with time.</p>
-      <p>If you're alone, go where other people are — a different room, a stairwell, outside the door, a shop that's open.</p>
-    </div>
-
-    <div class="step">
-      <div class="n">Step 3</div>
-      <h3>Bring the body down first</h3>
-      <p>The thinking won't come back until the physiology does. Pick one and do it for a few minutes:</p>
-      <ul>
-        <li><b>Move hard.</b> Fast walk, stairs, push-ups, dancing to something loud — enough to breathe heavily. Short and intense.</li>
-        <li><b>Paced breathing.</b> Breathe out longer than you breathe in. Roughly in for 4, out for 6 to 8. Keep going past the point where it feels pointless.</li>
-        <li><b>Paired muscle relaxation.</b> Tense a muscle group hard on the in-breath, release it completely on the long out-breath. Work up the body.</li>
-      </ul>
-    </div>
-
-    <div class="step">
-      <div class="n">Step 4</div>
-      <h3>Get through the next hour — ACCEPTS</h3>
-      <ul>
-        <li><b>Activities</b> — something with your hands that needs a little attention.</li>
-        <li><b>Contributing</b> — do one small thing for someone else.</li>
-        <li><b>Comparisons</b> — a time you got through something like this.</li>
-        <li><b>Emotions</b> — put on something that makes you feel a different thing on purpose.</li>
-        <li><b>Pushing away</b> — box it, shelve it, set a time to come back to it.</li>
-        <li><b>Thoughts</b> — count, name things, follow a plot.</li>
-        <li><b>Sensations</b> — sound, texture, smell, taste. Nothing that hurts.</li>
-      </ul>
-      <p>Then self-soothe through the five senses, gently: something warm to drink, a good smell, a familiar album, soft fabric, a view out a window.</p>
-    </div>
-
-    <div class="step">
-      <div class="n">Step 5</div>
-      <h3>Pros and cons, honestly</h3>
-      <p>Not the sanitised version. What acting on the urge would give you in the next ten minutes, what it would cost you tomorrow, next month, and with the people in step 6. Write it in a mood entry if it helps to see it.</p>
-    </div>
-
-    <div class="step">
-      <div class="n">Step 6</div>
-      <h3>Tell someone it's bad right now</h3>
-      <p>You don't have to explain it well. "It's bad tonight, can you stay on the phone" is a complete sentence.</p>
-      <div id="crisisContacts"></div>
-      <div class="row">
-        <button class="ghost" id="ccAdd">Add a person</button>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="n">Step 7</div>
-      <h3>Lines that answer</h3>
-      <a class="call" href="tel:880028888"><b>8 800 28 888</b><small>Jaunimo linija — free, anonymous, 24/7. Chat at jaunimolinija.lt, 18:00–24:00.</small></a>
-      <a class="call" href="tel:116123"><b>116 123</b><small>Vilties linija — free and confidential, 24/7, for adults.</small></a>
-      <a class="call" href="tel:112"><b>112</b><small>If you can't keep yourself safe, or you've already hurt yourself. Answers in Lithuanian, English, Russian and Polish.</small></a>
-      <p class="hint">Add your own crisis team, ward, or on-call number below and it stays on this page.</p>
-      <div id="crisisNumbers"></div>
-      <div class="row"><button class="ghost" id="cnAdd">Add a number</button></div>
-    </div>
-  </div>
-
-  <div class="eyebrow">Written by you, for this moment</div>
+  <div class="eyebrow">Written by you, for all of them</div>
   <label for="cSigns">What it looks like when I'm heading there</label>
   <textarea id="cSigns" class="short" placeholder="Early signs other people might notice before you do."></textarea>
   <label for="cWorks">What has actually worked before</label>
@@ -644,7 +709,51 @@ const THRESHOLD=4;
 
 const PREP_CATS=["Memories","Sleep quality","Hallucinations","Sadistic thoughts","Masochistic thoughts","Self-destructive / self-harm thoughts","Honesty & disclosure","Meds & side effects","Other"];
 
-const EMOTIONS=["Anger","Shame","Emptiness","Fear","Grief","Disgust","Envy","Guilt","Numb","Dissociated","Panic","Rage","Rejected","Abandoned","Hopeless","Irritable","Restless","Relief","Calm","Hypomanic"];
+const EMOTIONS=["Anger","Shame","Emptiness","Fear","Grief","Disgust","Envy","Guilt","Numb","Apathy","Antipathy","Dissociated","Panic","Rage","Rejected","Abandoned","Hopeless","Irritable","Restless","Relief","Calm","Hypomanic"];
+
+const DEFAULT_MEDS={
+  morning:["Cariprazine","Depakine (valproate)","Birth control","Venlafaxine","Tiapride","Propranolol"],
+  evening:["Mirtazapine","Depakine (valproate)"]
+};
+
+const MEAL_KINDS=["Morning","Midday","Evening","Snack","Night","Skipped this one"];
+
+const ANALYSIS_KINDS=["Dream","Nightmare","Intrusive thought","Recurring image","Quote","Something said to me","Memory fragment","Something I wrote","Other"];
+
+const ANALYSIS_PROMPTS=[
+ "What was happening the day before this?",
+ "Who is in it, and who do they actually resemble?",
+ "What is the feeling underneath the image, rather than the image itself?",
+ "If someone else told you this, what would you notice first?",
+ "What is being avoided in it?",
+ "What does the setting remind you of — not symbolically, literally?",
+ "Whose voice is it in?",
+ "What happens right before it stops?",
+ "If it is asking for something, what?",
+ "Which single detail doesn't fit the rest of it?",
+ "Has the ending ever changed? What changed it?",
+ "What would have to be true about your life for this to make complete sense?",
+ "Where are you in it — inside it, watching it, or absent?",
+ "What did you do immediately after it, and was that a coincidence?",
+ "If this is a rehearsal, what is it rehearsing for?",
+ "What would you be reluctant to say about this out loud in session?",
+ "Is it closer to a memory, a fear, or a wish?",
+ "What is the oldest thing in it?"
+];
+
+const SELF_CARE_IDEAS=[
+ "Go on a peaceful walk","Take a long shower","Brush my teeth","Do my hair","Do my eyebrows",
+ "Go to the gym","Go to sleep early","Eat a balanced meal","Drink water","Set a boundary","Take my meds",
+ "Do my skincare","Stretch for five minutes","Sit in daylight for ten minutes","Change the sheets",
+ "Wash and change my clothes","Cut and clean my nails","Eat something warm","Cook instead of skipping",
+ "Put my phone down an hour before bed","Listen to a full album doing nothing else","Tidy one small area",
+ "Say no to one thing","Let someone help me with something","Rest without earning it first",
+ "Wear something that actually feels like me","Take a break from the screen","Open a window",
+ "Have water before coffee","Answer the message I've been avoiding","Go to bed instead of proving a point",
+ "Book or keep an appointment","Sit outside for ten minutes","Have breakfast even if it's small",
+ "Take the long way home on purpose","Put music on while I get ready","Wash my face before bed",
+ "Sit down to eat instead of standing","Say one true thing to someone","Leave the flat once today"
+];
 
 const LIE_WITH=["Partner","Family","My sister","Therapist","Psychiatrist","Doctor / nurse","Friend","Stranger","Online","Work / school","Myself"];
 
@@ -671,7 +780,7 @@ const DISTORTIONS=[
  {id:"bw",name:"All-or-nothing thinking",short:"B/W",
   def:"Only two settings exist: perfect or ruined, everyone or no one. The middle of the scale disappears.",
   ex:"I missed one session, so the whole thing was pointless.",
-  pats:[/\b(always|never|nothing|everything|everyone|no ?one|nobody|completely|totally|entirely|utterly|forever|all the time|every ?single time)\b/gi,/\b(visada|niekada|niekas|visi|nieko)\b/gi,/\b(всегда|никогда|никто|все|ничего)\b/gi]},
+  pats:[/\b(always|never|constantly|nothing|everything|everyone|no ?one|nobody|completely|totally|entirely|utterly|forever|all the time|every ?single time)\b/gi,/\b(visada|niekada|niekas|visi|nieko)\b/gi,/\b(всегда|никогда|никто|все|ничего)\b/gi]},
  {id:"over",name:"Overgeneralising",short:"GEN",
   def:"One event becomes a rule about how things always go.",
   ex:"Of course they cancelled. This is what happens.",
@@ -737,9 +846,10 @@ try{ localStorage.setItem("__t","1"); localStorage.removeItem("__t"); }catch(e){
 
 function blank(){
   return {settings:{title:"Case File",pin:"",theme:"night"},
-    urges:[], mood:[], thoughts:[], prep:[], sessions:[], lies:[],
-    crisis:{signs:"",works:"",reasons:"",safe:"",contacts:[],numbers:[]},
-    customEmotions:[], seq:{mood:0,thoughts:0,prep:0,sessions:0,urges:0,lies:0}};
+    urges:[], mood:[], thoughts:[], prep:[], sessions:[], lies:[], food:[], analysis:[],
+    meds:{morning:[],evening:[]}, medLog:{}, bodyWeeks:{}, customCareIdeas:[], medsInit:false,
+    crisis:{signs:"",works:"",reasons:"",safe:"",contacts:[],numbers:[],notes:{},cleanSince:""},
+    customEmotions:[], seq:{mood:0,thoughts:0,prep:0,sessions:0,urges:0,lies:0,food:0,analysis:0}};
 }
 let DB=blank();
 function load(){
@@ -749,7 +859,15 @@ function load(){
       DB.settings=Object.assign(blank().settings,p.settings||{});
       DB.crisis=Object.assign(blank().crisis,p.crisis||{});
       DB.seq=Object.assign(blank().seq,p.seq||{});
-      ["urges","mood","thoughts","prep","sessions","lies","customEmotions"].forEach(k=>{ if(!Array.isArray(DB[k])) DB[k]=[]; }); }
+      ["urges","mood","thoughts","prep","sessions","lies","food","analysis","customEmotions","customCareIdeas"].forEach(k=>{ if(!Array.isArray(DB[k])) DB[k]=[]; });
+      if(!DB.meds||!Array.isArray(DB.meds.morning)) DB.meds={morning:[],evening:[]};
+      if(!DB.medLog||typeof DB.medLog!=="object") DB.medLog={};
+      if(!DB.bodyWeeks||typeof DB.bodyWeeks!=="object") DB.bodyWeeks={}; }
+  if(!DB.medsInit && !DB.meds.morning.length && !DB.meds.evening.length){
+    DB.meds.morning=DEFAULT_MEDS.morning.slice();
+    DB.meds.evening=DEFAULT_MEDS.evening.slice();
+    DB.medsInit=true;
+  }
   }catch(e){ console.warn("load failed",e); }
 }
 function save(){
@@ -785,14 +903,23 @@ function tagPicker(el,options,selected,onChange){
 }
 
 /* build a 1-5 picker; onPick(value) */
-function makeScale(el,value,onPick){
-  el.innerHTML="";
+function makeScale(el,value,onPick,opts){
+  opts=opts||{};
+  el.innerHTML=""; el.classList.toggle("stars",!!opts.stars);
   for(let i=1;i<=5;i++){
     const b=document.createElement("button");
-    b.type="button"; b.textContent=i;
+    b.type="button";
+    if(opts.stars){
+      const on = value && value>=i;
+      b.textContent = on ? "\u2605" : "\u2606";
+      b.className = "st" + (on ? " lc"+value : "");
+      b.setAttribute("aria-label", i+" of 5");
+    } else {
+      b.textContent=i;
+      if(value===i) b.classList.add("lv"+i);
+    }
     b.setAttribute("aria-pressed", value===i?"true":"false");
-    if(value===i) b.classList.add("lv"+i);
-    b.onclick=()=>{ onPick(i); };
+    b.onclick=()=>{ onPick(value===i?null:i); };
     el.appendChild(b);
   }
 }
@@ -807,6 +934,10 @@ function go(id){
   if(id==="mood") renderMoodList();
   if(id==="thoughts") renderThoughtList();
   if(id==="lies") renderLies();
+  if(id==="meds") renderMeds();
+  if(id==="analysis") renderAnalysis();
+  if(id==="food") renderFood();
+  if(id==="body") renderBody();
   if(id==="prep") renderPrep();
   if(id==="after") renderSessions();
   if(id==="crisis") renderCrisis();
@@ -828,6 +959,10 @@ function renderToday(){
   if(thToday) bits.push(thToday+(thToday===1?" thought record.":" thought records."));
   const liesToday=DB.lies.filter(l=>(l.when||"").slice(0,10)===todayISO()).length;
   if(liesToday) bits.push(liesToday+(liesToday===1?" lie-log entry.":" lie-log entries."));
+  const md=DB.medLog[todayISO()]||{};
+  const mc=(g)=>Object.keys(md[g]||{}).filter(k=>md[g][k]==="taken").length;
+  if(DB.meds.morning.length||DB.meds.evening.length)
+    bits.push("Meds "+mc("morning")+"/"+DB.meds.morning.length+" morning, "+mc("evening")+"/"+DB.meds.evening.length+" evening.");
   $("#todayLine").textContent=bits.join(" ");
 
   $("#strip").innerHTML=URGES.map(u=>{
@@ -862,7 +997,7 @@ function drawChart(){
   const flush=()=>{ if(seg.length>1) svg+='<polyline class="ln" points="'+seg.map(p=>X(p.x).toFixed(1)+","+Y(p.y).toFixed(1)).join(" ")+'"/>'; seg=[]; };
   pts.forEach(p=>{ if(p) seg.push(p); else flush(); }); flush();
   pts.forEach(p=>{ if(p) svg+='<circle class="dot" cx="'+X(p.x).toFixed(1)+'" cy="'+Y(p.y).toFixed(1)+'" r="3.2"/>'; });
-  if(!pts.some(Boolean)) svg+='<text x="'+(W/2)+'" y="'+(H/2)+'" text-anchor="middle" fill="#8b93a7" font-size="13" font-family="monospace">no data yet</text>';
+  if(!pts.some(Boolean)) svg+='<text x="'+(W/2)+'" y="'+(H/2)+'" text-anchor="middle" fill="#8b9a8e" font-size="13" font-family="monospace">no data yet</text>';
   $("#chart").innerHTML=svg;
   $("#chartFrom").textContent=fmtDate(days[0]);
   $("#chartTo").textContent="Today";
@@ -887,7 +1022,7 @@ function buildUrgeScales(){
     w.innerHTML='<div class="top"><span>'+esc(u.label)+'</span><span class="v"></span></div><div class="scale"></div>'
       +'<div class="anchors"><span>1 · '+esc(u.lo)+'</span><span>5 · '+esc(u.hi)+'</span></div>';
     const scaleEl=w.querySelector(".scale"), vEl=w.querySelector(".v");
-    const paint=()=>{ makeScale(scaleEl,urgeDraft[u.k]||null,v=>{ urgeDraft[u.k]=v; paint(); });
+    const paint=()=>{ makeScale(scaleEl,urgeDraft[u.k]||null,v=>{ urgeDraft[u.k]=v; paint(); },{stars:true});
       vEl.textContent=urgeDraft[u.k]?urgeDraft[u.k]+"/5":"—"; };
     paint(); box.appendChild(w);
   });
@@ -902,7 +1037,7 @@ $("#urgeSave").addEventListener("click",()=>{
   DB.urges.sort((a,b)=>b.date.localeCompare(a.date));
   save();
   const hits=URGES.filter(u=>(urgeDraft[u.k]||0)>=THRESHOLD);
-  if(hits.length){ openCrisis(hits.map(h=>h.label+" at "+urgeDraft[h.k])); }
+  if(hits.length){ openCrisis(hits.map(h=>h.label+" at "+urgeDraft[h.k]), hits.map(h=>h.k)); }
   else { toast("Check-in saved"); renderUrges(); renderToday(); }
 });
 function renderUrgeList(){
@@ -922,41 +1057,262 @@ function renderUrgeList(){
 }
 
 /* ============ CRISIS ============ */
-let pendingCrisis=null;
-function openCrisis(reasons){ pendingCrisis=reasons&&reasons.length?reasons:null; go("crisis"); }
+const PLANS=[
+ {id:"harm",     label:"Self-harm / suicidal", keys:["sh","si"]},
+ {id:"sadistic", label:"Sadistic urges",       keys:["sad"]},
+ {id:"give",     label:"Giving up on healing", keys:["give"]},
+ {id:"sub",      label:"Substances",           keys:["sub"]}
+];
+const KEY2PLAN={sh:"harm",si:"harm",sad:"sadistic",give:"give",sub:"sub"};
+let pendingCrisis=null, crisisView="harm";
+
+function openCrisis(reasons,keys){
+  pendingCrisis = (reasons&&reasons.length) ? reasons : null;
+  if(keys&&keys.length){
+    const order=["harm","sadistic","sub","give"];
+    const ids=keys.map(k=>KEY2PLAN[k]).filter(Boolean);
+    crisisView = order.find(o=>ids.includes(o)) || "harm";
+  }
+  go("crisis");
+}
+
+/* --- shared steps --- */
+function stepSTOP(n){
+  return '<div class="step"><div class="n">Step '+n+'</div><h3>Stop where you are</h3>'
+  +'<p>Feet still. Hands empty. Don\'t act on it for the length of this page — that\'s the only commitment right now.</p>'
+  +'<ul><li><b>S</b> — Stop. Freeze the moment.</li>'
+  +'<li><b>T</b> — Take a step back, physically if you can.</li>'
+  +'<li><b>O</b> — Observe. What\'s happening in the room, in your body, in the thought.</li>'
+  +'<li><b>P</b> — Proceed mindfully. Pick the next step from this page, not from the urge.</li></ul></div>';
+}
+function stepBody(n){
+  return '<div class="step"><div class="n">Step '+n+'</div><h3>Bring the body down first</h3>'
+  +'<p>The thinking won\'t come back until the physiology does. Pick one and do it for a few minutes:</p>'
+  +'<ul><li><b>Move hard.</b> Fast walk, stairs, push-ups, dancing to something loud — enough to breathe heavily. Short and intense.</li>'
+  +'<li><b>Paced breathing.</b> Breathe out longer than you breathe in. Roughly in for 4, out for 6 to 8. Keep going past the point where it feels pointless.</li>'
+  +'<li><b>Paired muscle relaxation.</b> Tense a muscle group hard on the in-breath, release it completely on the long out-breath. Work up the body.</li></ul></div>';
+}
+function stepAccepts(n){
+  return '<div class="step"><div class="n">Step '+n+'</div><h3>Get through the next hour — ACCEPTS</h3>'
+  +'<ul><li><b>Activities</b> — something with your hands that needs a little attention.</li>'
+  +'<li><b>Contributing</b> — do one small thing for someone else.</li>'
+  +'<li><b>Comparisons</b> — a time you got through something like this.</li>'
+  +'<li><b>Emotions</b> — put on something that makes you feel a different thing on purpose.</li>'
+  +'<li><b>Pushing away</b> — box it, shelve it, set a time to come back to it.</li>'
+  +'<li><b>Thoughts</b> — count, name things, follow a plot.</li>'
+  +'<li><b>Sensations</b> — sound, texture, smell, taste. Nothing that hurts.</li></ul>'
+  +'<p>Then self-soothe through the five senses, gently: something warm to drink, a good smell, a familiar album, soft fabric, a view out a window.</p></div>';
+}
+function stepProsCons(n,extra){
+  return '<div class="step"><div class="n">Step '+n+'</div><h3>Pros and cons, honestly</h3>'
+  +'<p>Not the sanitised version. What acting on it would give you in the next ten minutes, and what it would cost you tomorrow, next month, and with the people further down this page.</p>'
+  +(extra||"")+'</div>';
+}
+function stepContacts(n,lead){
+  return '<div class="step"><div class="n">Step '+n+'</div><h3>Tell someone it\'s bad right now</h3>'
+  +'<p>'+(lead||'You don\'t have to explain it well. "It\'s bad tonight, can you stay on the phone" is a complete sentence.')+'</p>'
+  +'<div id="crisisContacts"></div><div class="row"><button class="ghost" id="ccAdd">Add a person</button></div></div>';
+}
+function stepLines(n,note){
+  return '<div class="step"><div class="n">Step '+n+'</div><h3>Lines that answer</h3>'
+  +(note?'<p>'+note+'</p>':"")
+  +'<a class="call" href="tel:880028888"><b>8 800 28 888</b><small>Jaunimo linija — free, anonymous, 24/7. Chat at jaunimolinija.lt, 18:00–24:00.</small></a>'
+  +'<a class="call" href="tel:116123"><b>116 123</b><small>Vilties linija — free and confidential, 24/7, for adults.</small></a>'
+  +'<a class="call" href="tel:112"><b>112</b><small>If you can\'t keep yourself or anyone else safe. Answers in Lithuanian, English, Russian and Polish.</small></a>'
+  +'<div id="crisisNumbers"></div><div class="row"><button class="ghost" id="cnAdd">Add a number</button></div></div>';
+}
+function planNote(id){
+  const v=(DB.crisis.notes||{})[id]||"";
+  return '<div class="step"><div class="n">Yours</div><h3>Notes for this one</h3>'
+  +'<textarea id="cPlanNote" class="short" placeholder="Anything that only applies to this urge — what works, what it costs you specifically, who to call for this one.">'+esc(v)+'</textarea>'
+  +'<div class="row"><button class="ghost" id="cPlanNoteSave">Save note</button></div></div>';
+}
+
+/* --- evidence pulled from your own data --- */
+function calmDaysBlock(keys){
+  const rows=DB.urges.filter(u=>keys.some(k=>u[k]&&u[k]<=2));
+  const recent=DB.urges.slice(0,30);
+  const recentCalm=recent.filter(u=>keys.some(k=>u[k]&&u[k]<=2)).length;
+  if(!rows.length){
+    return '<p>You haven\'t logged a low day for this yet. That isn\'t evidence there won\'t be one — it\'s evidence you started logging during a bad stretch.</p>';
+  }
+  const list=rows.slice(0,10).map(u=>{
+    const vals=keys.filter(k=>u[k]).map(k=>(URGES.find(x=>x.k===k)||{}).short+" "+u[k]).join(" · ");
+    return '<li>'+esc(fmtDate(u.date))+' — '+esc(vals)+'</li>';
+  }).join("");
+  return '<p>'+recentCalm+' of your last '+recent.length+' check-ins had this at 1 or 2. Those days were also real, and you were also you on them.</p>'
+    +'<ul>'+list+'</ul>'
+    +(rows.length>10?'<p class="hint">'+(rows.length-10)+' more before these.</p>':"");
+}
+function progressBlock(){
+  const bits=[];
+  if(DB.urges.length) bits.push(DB.urges.length+" days checked in");
+  if(DB.thoughts.length) bits.push(DB.thoughts.length+" thought"+(DB.thoughts.length===1?"":"s")+" pulled apart and rewritten");
+  if(DB.mood.length) bits.push(DB.mood.length+" mood entr"+(DB.mood.length===1?"y":"ies")+" logged instead of just endured");
+  const raised=DB.prep.filter(p=>p.done).length;
+  if(raised) bits.push(raised+" thing"+(raised===1?"":"s")+" actually raised in session");
+  if(DB.sessions.length) bits.push(DB.sessions.length+" session"+(DB.sessions.length===1?"":"s")+" logged");
+  if(DB.lies.length) bits.push(DB.lies.length+" lie"+(DB.lies.length===1?"":"s")+" written down rather than buried");
+  if(!bits.length) return '<p>Not much logged yet — but you built this and opened it, which is not what giving up looks like.</p>';
+  return '<p>Since you started this:</p><ul>'+bits.map(b=>'<li>'+esc(b)+'</li>').join("")+'</ul>'
+   +'<p>None of that is how someone who gave up behaves. The feeling is telling you it never happened. The file disagrees.</p>';
+}
+function cleanBlock(){
+  const cs=DB.crisis.cleanSince;
+  if(!cs){
+    return '<p>You\'ve done this before. That means staying clean is something you are capable of, not something that happened to you once.</p>'
+      +'<div class="row"><button class="ghost" id="cleanSet">Set my clean date</button></div>';
+  }
+  const days=Math.max(0,Math.floor((Date.now()-new Date(cs+"T00:00").getTime())/86400000));
+  return '<p class="readout"><b>'+days+' days</b> since '+esc(fmtDate(cs))+'.</p>'
+    +'<p>Every one of those was a day the urge turned up and lost. Tonight is the same kind of day, not a different kind.</p>'
+    +'<div class="row"><button class="ghost" id="cleanSet">Change date</button></div>';
+}
+
+/* --- the four plans --- */
+function planHarm(){
+  return '<div class="card">'
+  + stepSTOP(1)
+  + '<div class="step"><div class="n">Step 2</div><h3>Put distance between you and harm</h3>'
+  + '<p>Move away from anything you could use to hurt yourself. Hand it to someone, put it somewhere that takes real effort to reach, or leave the room and don\'t go back alone. Distance buys time, and urges lose height with time.</p>'
+  + '<p>If you\'re alone, go where other people are — a different room, a stairwell, outside the door, a shop that\'s open.</p></div>'
+  + '<div class="step"><div class="n">Step 3</div><h3>This is not how it always is</h3>'
+  + calmDaysBlock(["sh","si"])
+  + '</div>'
+  + stepBody(4) + stepAccepts(5) + stepProsCons(6) + stepContacts(7) + stepLines(8) + planNote("harm")
+  + '</div>';
+}
+function planSadistic(){
+  return '<div class="card">'
+  + stepSTOP(1)
+  + '<div class="step"><div class="n">Step 2</div><h3>What it costs if you act on it</h3>'
+  + '<p>Read this before anything else, because it is the part the urge is currently hiding from you.</p>'
+  + '<ul>'
+  + '<li><b>It is a criminal offence.</b> Not a private failure — a charge, a record, and a file that follows you into every job application, every tenancy check, every border. Any career that runs a background check closes, permanently.</li>'
+  + '<li><b>The person stays afraid of you.</b> That doesn\'t heal and it doesn\'t get explained away. Everyone who loves you reorganises around managing you instead of knowing you.</li>'
+  + '<li><b>It can\'t be taken back.</b> You can apologise for words. You cannot un-hurt someone, and you would be the one who has to hold that afterwards — with the way you already talk to yourself about far smaller things.</li>'
+  + '<li><b>It changes what your team can offer you</b> and where, and it hands every future clinician a different starting point.</li>'
+  + '<li><b>The relief is minutes long.</b> The rest of it is permanent. That trade is the whole decision.</li></ul>'
+  + '<p>Having the thought is not the same as doing it, and it does not make you what you\'re afraid it makes you. The entire job of this page is protecting the gap between the two.</p></div>'
+  + '<div class="step"><div class="n">Step 3</div><h3>Get away from people until it passes</h3>'
+  + '<p>Separation is the plan. Not willpower — distance.</p>'
+  + '<ul>'
+  + '<li><b>Leave the room, then the flat if you can.</b> Don\'t negotiate with yourself about whether you need to. Go first, decide after.</li>'
+  + '<li><b>Go somewhere public but not interactive</b> — a walk, a bus route, a stairwell, a shop. Around people, not with them.</li>'
+  + '<li><b>Put the phone down. Messages count.</b> Don\'t open the thread, don\'t reply to anyone you\'re angry at, don\'t post. Airplane mode is a legitimate move and you can explain it tomorrow.</li>'
+  + '<li><b>Animals too.</b> If there\'s a pet in the flat, put a door between you.</li>'
+  + '<li><b>Nothing on top of it.</b> No alcohol, nothing else — every one of them shortens the gap between thinking and doing.</li>'
+  + '<li><b>Tell one safe person</b>: "I need to not be around anyone for a while." That is a complete explanation. You owe no detail.</li>'
+  + '<li><b>Set a clock.</b> Forty-five minutes, then check again. You are not deciding anything permanent — you\'re waiting out a peak.</li></ul></div>'
+  + stepBody(4) + stepAccepts(5)
+  + stepProsCons(6,'<p>Write it in a lie-log or mood entry if seeing it helps. Ten minutes of relief on one side; everything in step 2 on the other.</p>')
+  + stepContacts(7,'Someone who knows this about you already, if there is one. "I\'m having the thoughts and I\'ve left the flat" is enough — you don\'t have to describe them.')
+  + stepLines(8,'If you think you might actually act — not the thought, the act — call now. Being the person who called is not the same as being the person who did it, and it never becomes the same.')
+  + planNote("sadistic")
+  + '</div>';
+}
+function planGive(){
+  return '<div class="card">'
+  + stepSTOP(1)
+  + '<div class="step"><div class="n">Step 2</div><h3>Hopelessness is a symptom, not a forecast</h3>'
+  + '<p>What you are feeling right now is produced by the exact thing you are being treated for. It is a symptom presenting itself as information, and the specific lie it tells is <i>this is permanent</i>.</p>'
+  + '<p>You cannot see the future from inside this state. Not because you\'re not thinking clearly enough — because the state removes the ability, the way a fever removes appetite. Nothing you conclude about your life in the next hour is admissible.</p>'
+  + '<p>It also tends to arrive right <i>after</i> something almost worked, or after a session that opened something up. That timing isn\'t a coincidence and it isn\'t a verdict.</p></div>'
+  + '<div class="step"><div class="n">Step 3</div><h3>Fake it till you make it</h3>'
+  + '<p>This is opposite action, and it is not self-deception — it\'s the actual order the mechanism runs in. Behaviour first. The feeling arrives late, and it is allowed to.</p>'
+  + '<p>You are not deciding tonight whether to heal. You\'re deciding what to do in the next hour. Those are different sizes, and only one of them is yours to answer right now.</p>'
+  + '<p>Do one small thing exactly as if you believed it would work:</p>'
+  + '<ul><li>Take the meds that are due.</li><li>Drink a glass of water.</li><li>Ten minutes outside, no destination.</li><li>Wash your face and change your clothes.</li><li>Log one entry, badly.</li><li>Go to bed at a sane hour instead of proving the point.</li></ul>'
+  + '<p>Quitting doesn\'t expire. It is still available tomorrow, and the day after. Nothing is lost by postponing the decision to a day you can see further from.</p></div>'
+  + '<div class="step"><div class="n">Step 4</div><h3>What the record actually says</h3>'
+  + progressBlock() + '</div>'
+  + stepBody(5) + stepAccepts(6)
+  + stepContacts(7,'"I want to stop doing all of this" is worth saying out loud to someone. It usually gets smaller in the open.')
+  + stepLines(8) + planNote("give")
+  + '</div>';
+}
+function planSub(){
+  return '<div class="card">'
+  + stepSTOP(1)
+  + '<div class="step"><div class="n">Step 2</div><h3>What it actually costs</h3>'
+  + '<ul>'
+  + '<li><b>Daily life.</b> Days that disappear and don\'t come back. Mornings spent recovering rather than living. Everything already difficult becomes harder for a week afterwards, not a night.</li>'
+  + '<li><b>Relationships.</b> People stop talking to you and start checking on you. And the lying follows use automatically — you keep a log of what that does, and it grows fastest here.</li>'
+  + '<li><b>Money.</b> It comes out of rent, food, and the things you\'re trying to build. The cost climbs with tolerance; it never holds still at what it costs the first time.</li>'
+  + '<li><b>Treatment.</b> It interacts with what you\'re prescribed, it changes what your team can safely do, and coming off is not easier the second time than it was the first.</li></ul>'
+  + '<p class="hint">If you have used and you\'re stopping again, tell your team rather than doing it alone — stopping some things without support isn\'t safe.</p></div>'
+  + '<div class="step"><div class="n">Step 3</div><h3>You have already done this</h3>'
+  + cleanBlock() + '</div>'
+  + '<div class="step"><div class="n">Step 4</div><h3>Distance, then wait it out</h3>'
+  + '<ul><li>Don\'t be alone with it. Don\'t go where it is. Don\'t message the person who has it — close the thread, delete it if that\'s what it takes.</li>'
+  + '<li><b>Urge surfing.</b> It\'s a wave, twenty to forty minutes. It comes down whether or not you use. Using is the thing that teaches it to come back bigger.</li>'
+  + '<li><b>"Just this once" is a distortion</b>, and it\'s on your list — fortune telling wearing a reasonable voice. Run it through a thought record if it won\'t shut up.</li>'
+  + '<li><b>HALT.</b> Hungry, angry, lonely, tired — find which one, fix that instead. It is almost always one of them.</li></ul></div>'
+  + stepBody(5) + stepAccepts(6)
+  + stepContacts(7,'In the next ten minutes, not once you\'ve decided. "I want to use and I don\'t want to" is the whole message.')
+  + stepLines(8) + planNote("sub")
+  + '</div>';
+}
+const PLAN_RENDER={harm:planHarm,sadistic:planSadistic,give:planGive,sub:planSub};
+
 function renderCrisis(){
   const a=$("#crisisAlert");
   if(pendingCrisis){
     a.hidden=false;
-    a.innerHTML='<div class="alertbar"><b>You rated '+esc(pendingCrisis.join(", "))+'.</b><br>That is the number where you said you wanted this page opened for you. Work down it. You can leave whenever you want.</div>';
+    a.innerHTML='<div class="alertbar"><b>You rated '+esc(pendingCrisis.join(", "))+'.</b><br>That is the number where you said you wanted this opened for you. Work down it. You can leave whenever you want.</div>';
     pendingCrisis=null;
   } else { a.hidden=true; a.innerHTML=""; }
+
+  $("#crisisPick").innerHTML=PLANS.map(p=>
+    '<button type="button" class="tag" aria-pressed="'+(crisisView===p.id?"true":"false")+'" data-plan="'+p.id+'">'+esc(p.label)+'</button>').join("");
+  $("#crisisPick").querySelectorAll("[data-plan]").forEach(b=>b.onclick=()=>{ crisisView=b.dataset.plan; renderCrisis(); window.scrollTo(0,0); });
+
+  $("#crisisBody").innerHTML=(PLAN_RENDER[crisisView]||planHarm)();
+
   const c=DB.crisis;
   $("#cSigns").value=c.signs||""; $("#cWorks").value=c.works||"";
   $("#cReasons").value=c.reasons||""; $("#cSafe").value=c.safe||"";
-  const cc=$("#crisisContacts");
-  cc.innerHTML=(c.contacts||[]).map((p,i)=>
-    '<a class="call" href="tel:'+esc((p.tel||"").replace(/\s/g,""))+'"><b>'+esc(p.name||"Unnamed")+'</b><small>'+esc(p.tel||"")+(p.note?" · "+esc(p.note):"")+'</small></a>'
-    +'<div class="rowend"><button class="linkbtn del" data-rmc="'+i+'">Remove</button></div>').join("")
-    || '<p class="hint">No one added yet. Even one name here changes what this page can do.</p>';
-  cc.querySelectorAll("[data-rmc]").forEach(b=>b.onclick=()=>{ c.contacts.splice(+b.dataset.rmc,1); save(); renderCrisis(); });
-  const cn=$("#crisisNumbers");
-  cn.innerHTML=(c.numbers||[]).map((p,i)=>
-    '<a class="call" href="tel:'+esc((p.tel||"").replace(/\s/g,""))+'"><b>'+esc(p.tel||"")+'</b><small>'+esc(p.name||"")+'</small></a>'
-    +'<div class="rowend"><button class="linkbtn del" data-rmn="'+i+'">Remove</button></div>').join("");
-  cn.querySelectorAll("[data-rmn]").forEach(b=>b.onclick=()=>{ c.numbers.splice(+b.dataset.rmn,1); save(); renderCrisis(); });
+
+  const nb=$("#cPlanNoteSave");
+  if(nb) nb.onclick=()=>{ DB.crisis.notes=DB.crisis.notes||{}; DB.crisis.notes[crisisView]=$("#cPlanNote").value; save(); toast("Note saved"); };
+  const cb=$("#cleanSet");
+  if(cb) cb.onclick=()=>{
+    const v=prompt("Clean since which date? Format YYYY-MM-DD. Leave empty to remove.",DB.crisis.cleanSince||todayISO());
+    if(v===null) return;
+    DB.crisis.cleanSince = v.trim()||"";
+    save(); renderCrisis();
+  };
+  renderCrisisContacts();
 }
-$("#ccAdd").addEventListener("click",()=>{
-  const name=prompt("Name"); if(!name) return;
-  const tel=prompt("Phone number for "+name)||"";
-  const note=prompt("Anything to remember about calling them? (optional)")||"";
-  DB.crisis.contacts.push({name,tel,note}); save(); renderCrisis();
-});
-$("#cnAdd").addEventListener("click",()=>{
-  const tel=prompt("Number"); if(!tel) return;
-  const name=prompt("What is this number?")||"";
-  DB.crisis.numbers.push({name,tel}); save(); renderCrisis();
-});
+function renderCrisisContacts(){
+  const c=DB.crisis, cc=$("#crisisContacts"), cn=$("#crisisNumbers");
+  if(cc){
+    cc.innerHTML=(c.contacts||[]).map((p,i)=>
+      '<a class="call" href="tel:'+esc((p.tel||"").replace(/\s/g,""))+'"><b>'+esc(p.name||"Unnamed")+'</b><small>'+esc(p.tel||"")+(p.note?" · "+esc(p.note):"")+'</small></a>'
+      +'<div class="rowend"><button class="linkbtn del" data-rmc="'+i+'">Remove</button></div>').join("")
+      || '<p class="hint">No one added yet. Even one name here changes what this page can do.</p>';
+    cc.querySelectorAll("[data-rmc]").forEach(b=>b.onclick=()=>{ c.contacts.splice(+b.dataset.rmc,1); save(); renderCrisis(); });
+  }
+  if(cn){
+    cn.innerHTML=(c.numbers||[]).map((p,i)=>
+      '<a class="call" href="tel:'+esc((p.tel||"").replace(/\s/g,""))+'"><b>'+esc(p.tel||"")+'</b><small>'+esc(p.name||"")+'</small></a>'
+      +'<div class="rowend"><button class="linkbtn del" data-rmn="'+i+'">Remove</button></div>').join("");
+    cn.querySelectorAll("[data-rmn]").forEach(b=>b.onclick=()=>{ c.numbers.splice(+b.dataset.rmn,1); save(); renderCrisis(); });
+  }
+  const ac=$("#ccAdd");
+  if(ac) ac.onclick=()=>{
+    const name=prompt("Name"); if(!name) return;
+    const tel=prompt("Phone number for "+name)||"";
+    const note=prompt("Anything to remember about calling them? (optional)")||"";
+    DB.crisis.contacts.push({name,tel,note}); save(); renderCrisis();
+  };
+  const an=$("#cnAdd");
+  if(an) an.onclick=()=>{
+    const tel=prompt("Number"); if(!tel) return;
+    const name=prompt("What is this number?")||"";
+    DB.crisis.numbers.push({name,tel}); save(); renderCrisis();
+  };
+}
 $("#cSave").addEventListener("click",()=>{
   DB.crisis.signs=$("#cSigns").value; DB.crisis.works=$("#cWorks").value;
   DB.crisis.reasons=$("#cReasons").value; DB.crisis.safe=$("#cSafe").value;
@@ -1234,6 +1590,264 @@ function renderLieList(){
   });
 }
 
+/* ============ MEDS ============ */
+const MED_STATE={taken:"Taken",skipped:"Skipped"};
+function medDate(){ return $("#medDate").value||todayISO(); }
+function renderMeds(){
+  if(!$("#medDate").value) $("#medDate").value=todayISO();
+  ["morning","evening"].forEach(g=>{
+    const el=$(g==="morning"?"#medMorning":"#medEvening");
+    const list=DB.meds[g]||[];
+    if(!list.length){ el.innerHTML='<p class="hint">Nothing in this group.</p>'; return; }
+    const day=DB.medLog[medDate()]||{}; const grp=day[g]||{};
+    el.innerHTML=list.map((name,i)=>{
+      const st=grp[name]||"";
+      const cls = st==="taken" ? "lv1" : st==="skipped" ? "lv5" : "";
+      return '<div class="medrow"><button type="button" class="medbtn '+cls+'" data-mg="'+g+'" data-mn="'+esc(name)+'">'
+        +'<span class="nm">'+esc(name)+'</span><span class="st">'+(st?MED_STATE[st]:"Not yet")+'</span></button>'
+        +'<button class="linkbtn del" data-mrm="'+g+'|'+i+'">×</button></div>';
+    }).join("");
+    el.querySelectorAll("[data-mg]").forEach(b=>b.onclick=()=>{
+      const d=medDate(); DB.medLog[d]=DB.medLog[d]||{}; DB.medLog[d][b.dataset.mg]=DB.medLog[d][b.dataset.mg]||{};
+      const cur=DB.medLog[d][b.dataset.mg][b.dataset.mn]||"";
+      const next = cur===""?"taken" : cur==="taken"?"skipped" : "";
+      if(next) DB.medLog[d][b.dataset.mg][b.dataset.mn]=next;
+      else delete DB.medLog[d][b.dataset.mg][b.dataset.mn];
+      save(); renderMeds(); renderToday();
+    });
+    el.querySelectorAll("[data-mrm]").forEach(b=>b.onclick=()=>{
+      const [grp2,idx]=b.dataset.mrm.split("|");
+      if(!confirm("Remove "+DB.meds[grp2][+idx]+" from the "+grp2+" list?")) return;
+      DB.meds[grp2].splice(+idx,1); save(); renderMeds(); renderToday();
+    });
+  });
+  renderMedHistory();
+}
+function addMed(g){
+  const n=prompt("Name of the medication (add the dose too if it helps)");
+  if(!n||!n.trim()) return;
+  DB.meds[g].push(n.trim()); save(); renderMeds(); renderToday();
+}
+$("#medAddM").addEventListener("click",()=>addMed("morning"));
+$("#medAddE").addEventListener("click",()=>addMed("evening"));
+$("#medDate").addEventListener("change",renderMeds);
+function renderMedHistory(){
+  const el=$("#medHistory"); const days=[]; for(let i=0;i<14;i++) days.push(daysAgo(i));
+  el.innerHTML=days.map(d=>{
+    const day=DB.medLog[d]||{};
+    const cellFor=(g)=>{
+      const total=(DB.meds[g]||[]).length; if(!total) return "";
+      const grp=day[g]||{};
+      const taken=Object.keys(grp).filter(k=>grp[k]==="taken").length;
+      const cls = taken===total ? "lv1" : taken===0 ? "lv5" : "lv3";
+      return '<span class="mpill '+cls+'">'+(g==="morning"?"AM":"PM")+' '+taken+'/'+total+'</span>';
+    };
+    return '<div class="medhist"><span class="dt">'+esc(fmtDate(d))+'</span>'+cellFor("morning")+cellFor("evening")+'</div>';
+  }).join("");
+}
+
+/* ============ ANALYSIS ============ */
+let anKind=new Set(), anEditId=null, anPromptIdx=-1;
+function resetAnalysis(){
+  anKind=new Set(); anEditId=null;
+  ["#anTitle","#anRaw","#anContext","#anDuring","#anAfter","#anAssoc","#anWork"].forEach(x=>$(x).value="");
+  $("#anRecur").checked=false; $("#anWhen").value=nowLocal(); $("#anCancel").hidden=true;
+  $("#anPromptOut").hidden=true;
+  tagPicker($("#anKind"),ANALYSIS_KINDS,anKind);
+}
+function renderAnalysis(){
+  if(!$("#anWhen").value) $("#anWhen").value=nowLocal();
+  tagPicker($("#anKind"),ANALYSIS_KINDS,anKind);
+  renderAnalysisList();
+}
+$("#anPromptBtn").addEventListener("click",()=>{
+  let i; do { i=Math.floor(Math.random()*ANALYSIS_PROMPTS.length); } while(ANALYSIS_PROMPTS.length>1 && i===anPromptIdx);
+  anPromptIdx=i;
+  $("#anPromptOut").hidden=false;
+  $("#anPromptOut").textContent=ANALYSIS_PROMPTS[i];
+});
+$("#anCancel").addEventListener("click",resetAnalysis);
+$("#anSave").addEventListener("click",()=>{
+  const raw=$("#anRaw").value.trim();
+  if(!raw){ toast("Write the material first"); return; }
+  const rec={id:anEditId||nextId("analysis"),title:$("#anTitle").value.trim(),when:$("#anWhen").value||nowLocal(),
+    kind:Array.from(anKind),raw,context:$("#anContext").value.trim(),during:$("#anDuring").value.trim(),
+    after:$("#anAfter").value.trim(),assoc:$("#anAssoc").value.trim(),recur:$("#anRecur").checked,
+    work:$("#anWork").value.trim()};
+  const i=DB.analysis.findIndex(x=>x.id===rec.id);
+  if(i>=0) DB.analysis[i]=rec; else DB.analysis.push(rec);
+  DB.analysis.sort((a,b)=>(b.when||"").localeCompare(a.when||""));
+  save(); resetAnalysis(); renderAnalysisList(); toast("Saved");
+});
+function renderAnalysisList(){
+  const el=$("#anList");
+  if(!DB.analysis.length){ el.innerHTML='<p class="empty">Nothing here yet.</p>'; return; }
+  el.innerHTML=DB.analysis.map(a=>
+    '<div class="entry"><div class="meta"><span class="num">Nr. '+pad(a.id)+'</span><span>'+fmtDate(a.when)+'</span><span>'+fmtTime(a.when)+'</span>'
+    +(a.kind&&a.kind.length?'<span>'+esc(a.kind.join(", "))+'</span>':"")
+    +(a.recur?'<span style="color:var(--brass)">recurring</span>':"")+'</div>'
+    +(a.title?'<h3>'+esc(a.title)+'</h3>':"")
+    +'<p>'+esc(a.raw)+'</p>'
+    +(a.context?'<div class="lbl">Around it</div><p>'+esc(a.context)+'</p>':"")
+    +((a.during||a.after)?'<div class="lbl">Feeling</div><p>'+esc([a.during&&("inside: "+a.during),a.after&&("after: "+a.after)].filter(Boolean).join("  ·  "))+'</p>':"")
+    +(a.assoc?'<div class="lbl">Associations</div><p>'+esc(a.assoc)+'</p>':"")
+    +(a.work?'<div class="lbl">Analysis</div><p>'+esc(a.work)+'</p>':"")
+    +'<div class="rowend"><button class="linkbtn" data-ea="'+a.id+'">Edit</button>'
+    +'<button class="linkbtn" data-pa="'+a.id+'">Send to session prep</button>'
+    +'<button class="linkbtn del" data-da="'+a.id+'">Delete</button></div></div>').join("");
+  el.querySelectorAll("[data-ea]").forEach(b=>b.onclick=()=>{
+    const a=DB.analysis.find(x=>x.id===+b.dataset.ea); if(!a) return;
+    anEditId=a.id; $("#anTitle").value=a.title||""; $("#anWhen").value=a.when||nowLocal();
+    anKind=new Set(a.kind||[]); $("#anRaw").value=a.raw||""; $("#anContext").value=a.context||"";
+    $("#anDuring").value=a.during||""; $("#anAfter").value=a.after||""; $("#anAssoc").value=a.assoc||"";
+    $("#anRecur").checked=!!a.recur; $("#anWork").value=a.work||"";
+    $("#anCancel").hidden=false; tagPicker($("#anKind"),ANALYSIS_KINDS,anKind); window.scrollTo(0,0);
+  });
+  el.querySelectorAll("[data-pa]").forEach(b=>b.onclick=()=>{
+    const a=DB.analysis.find(x=>x.id===+b.dataset.pa); if(!a) return;
+    DB.prep.push({id:nextId("prep"),cat:"Other",
+      text:(a.kind&&a.kind.length?a.kind.join("/")+" — ":"")+(a.title||"")+"\n"+a.raw+(a.work?"\n\nWhat I make of it: "+a.work:""),
+      why:"",done:false,added:new Date().toISOString()});
+    save(); toast("Added to session prep");
+  });
+  el.querySelectorAll("[data-da]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Delete this?")) return;
+    DB.analysis=DB.analysis.filter(x=>x.id!==+b.dataset.da); save(); renderAnalysisList();
+  });
+}
+
+/* ============ FOOD ============ */
+let fMeal=new Set(), fEditId=null;
+function resetFood(){
+  fMeal=new Set(); fEditId=null;
+  ["#fWhat","#fWhere","#fBefore","#fAfter","#fNote"].forEach(x=>$(x).value="");
+  $("#fWhen").value=nowLocal(); $("#fCancel").hidden=true;
+  tagPicker($("#fMeal"),MEAL_KINDS,fMeal);
+}
+function renderFood(){
+  if(!$("#fWhen").value) $("#fWhen").value=nowLocal();
+  tagPicker($("#fMeal"),MEAL_KINDS,fMeal);
+  renderFoodList();
+}
+$("#fCancel").addEventListener("click",resetFood);
+$("#fSave").addEventListener("click",()=>{
+  const what=$("#fWhat").value.trim();
+  if(!what&&!fMeal.size){ toast("Write what you ate"); return; }
+  const rec={id:fEditId||nextId("food"),when:$("#fWhen").value||nowLocal(),meal:Array.from(fMeal),what,
+    where:$("#fWhere").value.trim(),before:$("#fBefore").value.trim(),after:$("#fAfter").value.trim(),
+    note:$("#fNote").value.trim()};
+  const i=DB.food.findIndex(x=>x.id===rec.id);
+  if(i>=0) DB.food[i]=rec; else DB.food.push(rec);
+  DB.food.sort((a,b)=>(b.when||"").localeCompare(a.when||""));
+  save(); resetFood(); renderFoodList(); toast("Saved");
+});
+function renderFoodList(){
+  const el=$("#fList");
+  if(!DB.food.length){ el.innerHTML='<p class="empty">Nothing logged yet.</p>'; return; }
+  let lastDay="";
+  el.innerHTML=DB.food.map(f=>{
+    const day=(f.when||"").slice(0,10);
+    let head="";
+    if(day!==lastDay){ head='<div class="eyebrow">'+esc(fmtDate(day))+'</div>'; lastDay=day; }
+    return head+'<div class="entry"><div class="meta"><span>'+fmtTime(f.when)+'</span>'
+      +(f.meal&&f.meal.length?'<span>'+esc(f.meal.join(", "))+'</span>':"")+'</div>'
+      +(f.what?'<p>'+esc(f.what)+'</p>':"")
+      +(f.where?'<div class="lbl">Where</div><p>'+esc(f.where)+'</p>':"")
+      +((f.before||f.after)?'<div class="lbl">Felt</div><p>'+esc([f.before&&("before: "+f.before),f.after&&("after: "+f.after)].filter(Boolean).join("  ·  "))+'</p>':"")
+      +(f.note?'<p>'+esc(f.note)+'</p>':"")
+      +'<div class="rowend"><button class="linkbtn" data-ef="'+f.id+'">Edit</button><button class="linkbtn del" data-df="'+f.id+'">Delete</button></div></div>';
+  }).join("");
+  el.querySelectorAll("[data-ef]").forEach(b=>b.onclick=()=>{
+    const f=DB.food.find(x=>x.id===+b.dataset.ef); if(!f) return;
+    fEditId=f.id; $("#fWhen").value=f.when||nowLocal(); fMeal=new Set(f.meal||[]);
+    $("#fWhat").value=f.what||""; $("#fWhere").value=f.where||"";
+    $("#fBefore").value=f.before||""; $("#fAfter").value=f.after||""; $("#fNote").value=f.note||"";
+    $("#fCancel").hidden=false; tagPicker($("#fMeal"),MEAL_KINDS,fMeal); window.scrollTo(0,0);
+  });
+  el.querySelectorAll("[data-df]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Delete this entry?")) return;
+    DB.food=DB.food.filter(x=>x.id!==+b.dataset.df); save(); renderFoodList();
+  });
+}
+
+/* ============ BODY / SELF-LOVE ============ */
+let bodyWeek=null;
+function weekStart(d){
+  const x = d ? new Date(d+"T00:00") : new Date();
+  const off=(x.getDay()+6)%7;
+  x.setDate(x.getDate()-off);
+  return todayISO(x);
+}
+function weekLabel(iso){
+  const a=new Date(iso+"T00:00"), b=new Date(a); b.setDate(b.getDate()+6);
+  return fmtDate(todayISO(a))+" – "+fmtDate(todayISO(b));
+}
+function weekData(){
+  if(!DB.bodyWeeks[bodyWeek]) DB.bodyWeeks[bodyWeek]={care:[],harm:[],planned:[],note:""};
+  const w=DB.bodyWeeks[bodyWeek];
+  ["care","harm","planned"].forEach(k=>{ if(!Array.isArray(w[k])) w[k]=[]; });
+  return w;
+}
+function shiftWeek(days){
+  const d=new Date(bodyWeek+"T00:00"); d.setDate(d.getDate()+days);
+  const next=todayISO(d);
+  if(next>weekStart()) return;
+  bodyWeek=next; renderBody();
+}
+function renderBody(){
+  if(!bodyWeek) bodyWeek=weekStart();
+  const w=weekData(), isNow = bodyWeek===weekStart();
+  $("#weekNav").innerHTML='<button class="ghost" id="wPrev">←</button>'
+    +'<span style="flex:1;text-align:center;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase">'
+    +esc(isNow?"This week":weekLabel(bodyWeek))+'</span>'
+    +'<button class="ghost" id="wNext"'+(isNow?" disabled style=\"opacity:.35\"":"")+'>→</button>';
+  $("#wPrev").onclick=()=>shiftWeek(-7);
+  $("#wNext").onclick=()=>{ if(!isNow) shiftWeek(7); };
+
+  const listHtml=(arr,key)=> arr.length
+    ? '<div class="tags">'+arr.map((x,i)=>'<span class="tag" aria-pressed="'+(key==="care"?"true":"false")+'">'+esc(x)
+        +' <button class="linkbtn del" style="padding:0 0 0 6px" data-rm="'+key+'|'+i+'">×</button></span>').join("")+'</div>'
+    : '<p class="hint">Nothing listed for this week yet.</p>';
+  $("#careList").innerHTML=listHtml(w.care,"care");
+  $("#harmList").innerHTML=listHtml(w.harm,"harm");
+  document.querySelectorAll("#careList [data-rm],#harmList [data-rm]").forEach(b=>b.onclick=()=>{
+    const [k,i]=b.dataset.rm.split("|"); w[k].splice(+i,1); save(); renderBody();
+  });
+  $("#bNote").value=w.note||"";
+
+  const box=$("#suggestBox");
+  if(w.harm.length>w.care.length){
+    const ideas=SELF_CARE_IDEAS.concat(DB.customCareIdeas||[]);
+    box.hidden=false;
+    box.innerHTML='<div class="card" style="border-left:2px solid var(--brass)">'
+      +'<h3 style="font-family:var(--serif);font-weight:400;font-size:19px;margin:0 0 6px">The second list is longer this week</h3>'
+      +'<p style="font-size:15px;margin:0 0 4px">That is information, not a failing — it usually means the week was hard, not that you are. Pick anything from here for this week or next. One is enough to change the count.</p>'
+      +'<div class="tags" id="ideaTags" style="margin-top:12px"></div>'
+      +'<input type="text" id="ideaAdd" placeholder="Add your own idea, press Enter" style="margin-top:10px">'
+      +(w.planned.length?'<div class="eyebrow">Picked for this week</div><div class="tags" id="plannedTags"></div>':"")
+      +'</div>';
+    const sel=new Set(w.planned);
+    tagPicker($("#ideaTags"),ideas,sel,()=>{ w.planned=Array.from(sel); save(); renderBody(); });
+    $("#ideaAdd").onkeydown=e=>{
+      if(e.key!=="Enter") return; e.preventDefault();
+      const v=e.target.value.trim(); if(!v) return;
+      if(!ideas.includes(v)) DB.customCareIdeas.push(v);
+      w.planned.push(v); save(); renderBody();
+    };
+    const pt=$("#plannedTags");
+    if(pt) pt.innerHTML=w.planned.map(x=>'<span class="tag" aria-pressed="true">'+esc(x)+'</span>').join("");
+  } else { box.hidden=true; box.innerHTML=""; }
+}
+["careAdd","harmAdd"].forEach(id=>{
+  $("#"+id).addEventListener("keydown",e=>{
+    if(e.key!=="Enter") return; e.preventDefault();
+    const v=e.target.value.trim(); if(!v) return;
+    weekData()[id==="careAdd"?"care":"harm"].push(v);
+    e.target.value=""; save(); renderBody();
+  });
+});
+$("#bSave").addEventListener("click",()=>{ weekData().note=$("#bNote").value; save(); toast("Week saved"); });
+
 /* ============ SESSION PREP ============ */
 function renderPrep(){
   const cat=$("#pCat");
@@ -1410,7 +2024,7 @@ $("#printBtn").addEventListener("click",()=>window.print());
 $("#wipeBtn").addEventListener("click",()=>{
   if(!confirm("Delete every entry, log and plan on this device? This cannot be undone.")) return;
   if(!confirm("Last check. Have you exported a backup?")) return;
-  DB=blank(); save(); applySettings(); resetMood(); resetThought(); resetSession(); resetLie(); go("today"); toast("Everything deleted");
+  DB=blank(); save(); applySettings(); resetMood(); resetThought(); resetSession(); resetLie(); resetFood(); resetAnalysis(); bodyWeek=null; go("today"); toast("Everything deleted");
 });
 
 /* ============ LOCK ============ */
@@ -1427,10 +2041,11 @@ $("#lockInput").addEventListener("keydown",e=>{ if(e.key==="Enter") tryUnlock();
 
 /* ============ INIT ============ */
 load();
+save();
 applySettings();
 renderEmotionTags(); paintMoodIntensity(); renderChecks(); renderLibrary(); paintBelief();
 $("#mWhen").value=nowLocal(); $("#aWhen").value=todayISO(); $("#urgeDate").value=todayISO();
-resetLie();
+resetLie(); resetFood(); resetAnalysis();
 paintARate();
 go("today");
 maybeLock();
