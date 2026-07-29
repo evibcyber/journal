@@ -115,6 +115,9 @@ button.ghost:hover{color:var(--paper);border-color:var(--muted)}
 button.danger{border-color:var(--l5);color:var(--l5)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:16px}
 .hint{font-size:13px;color:var(--muted);margin-top:6px}
+.addrow{display:flex;gap:8px;margin-top:8px;align-items:stretch}
+.addrow input{flex:1;min-width:0}
+.addrow button{flex:0 0 auto;white-space:nowrap}
 
 /* ---- scale picker ---- */
 .scale{display:flex;gap:6px;margin-top:6px}
@@ -263,7 +266,7 @@ details.dist p.ex{font-family:var(--serif);color:var(--paper);font-style:italic;
   <div class="inner">
     <div class="mark" style="margin-bottom:18px">Locked</div>
     <h1 style="font-family:var(--serif)">Enter your code</h1>
-    <input type="password" id="lockInput" inputmode="numeric" autocomplete="off" style="text-align:center;font-family:var(--mono);font-size:22px;letter-spacing:.4em">
+    <input type="password" id="lockInput" inputmode="numeric" enterkeyhint="go" autocomplete="off" style="text-align:center;font-family:var(--mono);font-size:22px;letter-spacing:.4em">
     <div class="row" style="justify-content:center"><button class="act" id="lockGo">Unlock</button></div>
     <p class="hint" id="lockMsg"></p>
   </div>
@@ -346,7 +349,10 @@ details.dist p.ex{font-family:var(--serif);color:var(--paper);font-style:italic;
   <input type="datetime-local" id="mWhen">
   <label>Emotion</label>
   <div class="tags" id="mEmotions"></div>
-  <input type="text" id="mEmotionAdd" placeholder="Add your own, then press Enter" style="margin-top:8px">
+  <div class="addrow">
+    <input type="text" id="mEmotionAdd" placeholder="Add your own emotion" enterkeyhint="done" autocomplete="off">
+    <button class="ghost" id="mEmotionAddBtn">Add</button>
+  </div>
   <div class="scaleWrap" style="margin-top:18px">
     <div class="top"><span>Intensity</span><span id="mIntLabel">—</span></div>
     <div class="scale" id="mIntensity"></div>
@@ -566,11 +572,17 @@ details.dist p.ex{font-family:var(--serif);color:var(--paper);font-style:italic;
 
   <div class="eyebrow">Things I did to appreciate and thank my body</div>
   <div id="careList"></div>
-  <input type="text" id="careAdd" placeholder="Add one, press Enter">
+  <div class="addrow">
+    <input type="text" id="careAdd" placeholder="Something I did for my body" enterkeyhint="done" autocomplete="off">
+    <button class="ghost" id="careAddBtn">Add</button>
+  </div>
 
   <div class="eyebrow">Things I did that disrespected my body</div>
   <div id="harmList"></div>
-  <input type="text" id="harmAdd" placeholder="Add one, press Enter">
+  <div class="addrow">
+    <input type="text" id="harmAdd" placeholder="Something that went the other way" enterkeyhint="done" autocomplete="off">
+    <button class="ghost" id="harmAddBtn">Add</button>
+  </div>
   <p class="hint">A list of actions, not a verdict on you. It's here so the other list has something to be measured against.</p>
 
   <div id="suggestBox" hidden></div>
@@ -892,6 +904,33 @@ function pips(n){ return "●".repeat(n)+"○".repeat(5-n); }
 function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._x); t._x=setTimeout(()=>t.classList.remove("show"),1900); }
 function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return todayISO(d); }
 
+/* Wire an "add" text field so it works with a button, with Enter, and with
+   phone keyboards that swallow Enter during IME composition. */
+function wireAddField(input,btn,onAdd){
+  if(!input) return null;
+  let composing=false;
+  input.addEventListener("compositionstart",()=>{composing=true;});
+  input.addEventListener("compositionend",()=>{composing=false;});
+  const fire=()=>{
+    const v=input.value.trim();
+    if(!v){ input.focus(); return; }
+    input.value="";
+    onAdd(v);
+  };
+  const isEnter=e=>(e.key==="Enter"||e.keyCode===13||e.which===13);
+  input.addEventListener("keydown",e=>{
+    if(composing||e.isComposing||e.keyCode===229) return;
+    if(isEnter(e)){ e.preventDefault(); fire(); }
+  });
+  // some mobile keyboards only surface the key on keyup
+  input.addEventListener("keyup",e=>{
+    if(composing||e.isComposing||e.keyCode===229) return;
+    if(isEnter(e)&&input.value.trim()){ e.preventDefault(); fire(); }
+  });
+  if(btn) btn.addEventListener("click",e=>{ e.preventDefault(); fire(); });
+  return fire;
+}
+
 /* multi-select tag picker backed by a Set */
 function tagPicker(el,options,selected,onChange){
   el.innerHTML=options.map(o=>'<button type="button" class="tag" aria-pressed="'+(selected.has(o)?"true":"false")+'" data-tv="'+esc(o)+'">'+esc(o)+'</button>').join("");
@@ -1161,12 +1200,12 @@ function cleanBlock(){
   const cs=DB.crisis.cleanSince;
   if(!cs){
     return '<p>You\'ve done this before. That means staying clean is something you are capable of, not something that happened to you once.</p>'
-      +'<div class="row"><button class="ghost" id="cleanSet">Set my clean date</button></div>';
+      +'<div class="addrow"><input type="date" id="cleanDate" max="'+todayISO()+'"><button class="ghost" id="cleanSet">Set</button></div>';
   }
   const days=Math.max(0,Math.floor((Date.now()-new Date(cs+"T00:00").getTime())/86400000));
   return '<p class="readout"><b>'+days+' days</b> since '+esc(fmtDate(cs))+'.</p>'
     +'<p>Every one of those was a day the urge turned up and lost. Tonight is the same kind of day, not a different kind.</p>'
-    +'<div class="row"><button class="ghost" id="cleanSet">Change date</button></div>';
+    +'<div class="addrow"><input type="date" id="cleanDate" value="'+esc(cs)+'" max="'+todayISO()+'"><button class="ghost" id="cleanSet">Change</button></div>';
 }
 
 /* --- the four plans --- */
@@ -1277,10 +1316,10 @@ function renderCrisis(){
   if(nb) nb.onclick=()=>{ DB.crisis.notes=DB.crisis.notes||{}; DB.crisis.notes[crisisView]=$("#cPlanNote").value; save(); toast("Note saved"); };
   const cb=$("#cleanSet");
   if(cb) cb.onclick=()=>{
-    const v=prompt("Clean since which date? Format YYYY-MM-DD. Leave empty to remove.",DB.crisis.cleanSince||todayISO());
-    if(v===null) return;
-    DB.crisis.cleanSince = v.trim()||"";
+    const v=($("#cleanDate")||{}).value||"";
+    DB.crisis.cleanSince=v;
     save(); renderCrisis();
+    toast(v?"Date set":"Date cleared");
   };
   renderCrisisContacts();
 }
@@ -1328,11 +1367,9 @@ function renderEmotionTags(){
     const v=b.dataset.emo; if(mSel.has(v)) mSel.delete(v); else mSel.add(v); renderEmotionTags();
   });
 }
-$("#mEmotionAdd").addEventListener("keydown",e=>{
-  if(e.key!=="Enter") return; e.preventDefault();
-  const v=e.target.value.trim(); if(!v) return;
+wireAddField($("#mEmotionAdd"),$("#mEmotionAddBtn"),v=>{
   if(!EMOTIONS.includes(v)&&!DB.customEmotions.includes(v)){ DB.customEmotions.push(v); save(); }
-  mSel.add(v); e.target.value=""; renderEmotionTags();
+  mSel.add(v); renderEmotionTags(); toast("Added");
 });
 function paintMoodIntensity(){
   makeScale($("#mIntensity"),mInt,v=>{ mInt=v; paintMoodIntensity(); });
@@ -1823,29 +1860,22 @@ function renderBody(){
       +'<h3 style="font-family:var(--serif);font-weight:400;font-size:19px;margin:0 0 6px">The second list is longer this week</h3>'
       +'<p style="font-size:15px;margin:0 0 4px">That is information, not a failing — it usually means the week was hard, not that you are. Pick anything from here for this week or next. One is enough to change the count.</p>'
       +'<div class="tags" id="ideaTags" style="margin-top:12px"></div>'
-      +'<input type="text" id="ideaAdd" placeholder="Add your own idea, press Enter" style="margin-top:10px">'
+      +'<div class="addrow" style="margin-top:10px"><input type="text" id="ideaAdd" placeholder="Add your own idea" enterkeyhint="done" autocomplete="off"><button class="ghost" id="ideaAddBtn">Add</button></div>'
       +(w.planned.length?'<div class="eyebrow">Picked for this week</div><div class="tags" id="plannedTags"></div>':"")
       +'</div>';
     const sel=new Set(w.planned);
     tagPicker($("#ideaTags"),ideas,sel,()=>{ w.planned=Array.from(sel); save(); renderBody(); });
-    $("#ideaAdd").onkeydown=e=>{
-      if(e.key!=="Enter") return; e.preventDefault();
-      const v=e.target.value.trim(); if(!v) return;
+    wireAddField($("#ideaAdd"),$("#ideaAddBtn"),v=>{
       if(!ideas.includes(v)) DB.customCareIdeas.push(v);
-      w.planned.push(v); save(); renderBody();
-    };
+      if(!w.planned.includes(v)) w.planned.push(v);
+      save(); renderBody();
+    });
     const pt=$("#plannedTags");
     if(pt) pt.innerHTML=w.planned.map(x=>'<span class="tag" aria-pressed="true">'+esc(x)+'</span>').join("");
   } else { box.hidden=true; box.innerHTML=""; }
 }
-["careAdd","harmAdd"].forEach(id=>{
-  $("#"+id).addEventListener("keydown",e=>{
-    if(e.key!=="Enter") return; e.preventDefault();
-    const v=e.target.value.trim(); if(!v) return;
-    weekData()[id==="careAdd"?"care":"harm"].push(v);
-    e.target.value=""; save(); renderBody();
-  });
-});
+wireAddField($("#careAdd"),$("#careAddBtn"),v=>{ weekData().care.push(v); save(); renderBody(); });
+wireAddField($("#harmAdd"),$("#harmAddBtn"),v=>{ weekData().harm.push(v); save(); renderBody(); });
 $("#bSave").addEventListener("click",()=>{ weekData().note=$("#bNote").value; save(); toast("Week saved"); });
 
 /* ============ SESSION PREP ============ */
@@ -2037,7 +2067,7 @@ function tryUnlock(){
   else { $("#lockMsg").textContent="Not that one."; $("#lockInput").value=""; }
 }
 $("#lockGo").addEventListener("click",tryUnlock);
-$("#lockInput").addEventListener("keydown",e=>{ if(e.key==="Enter") tryUnlock(); });
+$("#lockInput").addEventListener("keydown",e=>{ if(e.key==="Enter"||e.keyCode===13){ e.preventDefault(); tryUnlock(); } });
 
 /* ============ INIT ============ */
 load();
